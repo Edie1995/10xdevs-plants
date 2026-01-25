@@ -1,93 +1,111 @@
-# 10x Astro Starter
+# Greenie
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-## Tech Stack
+## Project name
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+Greenie
 
-## Prerequisites
+## Project description
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+Greenie is a responsive, login-only web utility for private management of home and garden plant care. Users create their own plant database from scratch, store care instructions, log actions, and receive information about upcoming watering and fertilizing dates based on actual activity.
 
-## Getting Started
+## Table of contents
 
-1. Clone the repository:
+- [Project name](#project-name)
+- [Project description](#project-description)
+- [Tech stack](#tech-stack)
+- [Getting started locally](#getting-started-locally)
+- [Available scripts](#available-scripts)
+- [Project scope](#project-scope)
+- [Project status](#project-status)
+- [License](#license)
 
+## Tech stack
+
+Frontend
+- [Astro](https://astro.build/) 5
+- [React](https://react.dev/) 19
+- [TypeScript](https://www.typescriptlang.org/) 5
+- [Tailwind CSS](https://tailwindcss.com/) 4
+- [shadcn/ui](https://ui.shadcn.com/)
+
+Backend
+- [Supabase](https://supabase.com/) (PostgreSQL + Auth + SDK)
+
+CI/CD and hosting
+- GitHub Actions
+- DigitalOcean (Docker-based deployment)
+
+Tooling
+- ESLint
+- Prettier
+- Husky + lint-staged
+
+## Getting started locally
+
+Prerequisites
+- Node.js `22.14.0` (from `.nvmrc`)
+- npm
+
+Setup
 ```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
-
-2. Install dependencies:
-
-```bash
+git clone <repo-url>
+cd 10xdevs-plants
+nvm use
 npm install
 ```
 
-3. Run the development server:
-
+Run the dev server
 ```bash
 npm run dev
 ```
 
-4. Build for production:
-
+Build for production
 ```bash
 npm run build
 ```
 
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
-
-## Project Structure
-
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
+Preview the production build
+```bash
+npm run preview
 ```
 
-## AI Development Support
+## Available scripts
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+- `npm run dev` - Start Astro dev server
+- `npm run build` - Build the production bundle
+- `npm run preview` - Preview the production build locally
+- `npm run astro` - Run Astro CLI
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint issues
+- `npm run format` - Format files with Prettier
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+## Project scope
 
-### Cursor IDE
+Core functionality
+- Authentication: email/password, Google login, password recovery, profile updates
+- Plant cards (CRUD) with structured care instructions and disease entries
+- Seasonal watering and fertilizing schedules with backdating and recalculation
+- Dashboard with urgency grouping, status colors, sorting, search, and pagination
+- UX essentials: empty states, success/error toasts, delete confirmations, mobile card menu, legal footer
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+Out of scope for MVP
+- Social features or shared content
+- Guest mode or access without login
+- Public knowledge base or external note editing
+- Push/email notifications for care actions
+- Mobile app
+- Photo uploads or advanced media
+- Seeded plant lists or starter content
 
-### GitHub Copilot
+Additional documentation
+- `./.ai/prd.md`
+- `./.ai/tech-stack.md`
 
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`
+## Project status
 
-### Windsurf
-
-The `.windsurfrules` file contains AI configuration for Windsurf.
-
-## Contributing
-
-Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
+MVP scope defined in the PRD and ready for implementation.
 
 ## License
 
