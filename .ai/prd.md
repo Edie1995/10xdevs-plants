@@ -1,9 +1,14 @@
 # Dokument wymagań produktu (PRD) - Greenie
 ## 1. Przegląd produktu
-Greenie to webowa aplikacja typu utility do prywatnego zarządzania pielęgnacją roślin domowych i ogrodowych. Produkt jest dostępny wyłącznie po zalogowaniu i działa online jako responsywna aplikacja webowa. Użytkownik buduje własną bazę roślin od zera, zapisuje instrukcje pielęgnacji, prowadzi dziennik działań oraz otrzymuje informację o zbliżających się terminach podlewania i nawożenia. W MVP nie ma funkcji społecznościowych, udostępniania treści, aplikacji mobilnej ani zaawansowanych multimediów. Identyfikacja roślin odbywa się poprzez wybór ikony i koloru.
+Greenie to webowa aplikacja typu utility do prywatnego zarządzania pielęgnacją roślin domowych i ogrodowych. 
+Produkt jest dostępny wyłącznie po zalogowaniu i działa online jako responsywna aplikacja webowa. 
+Użytkownik buduje własną bazę roślin od zera, zapisuje instrukcje pielęgnacji, prowadzi dziennik działań oraz otrzymuje informację o zbliżających się terminach podlewania i nawożenia. 
+W MVP nie ma funkcji społecznościowych, udostępniania treści, aplikacji mobilnej ani zaawansowanych multimediów. 
+Identyfikacja roślin odbywa się poprzez wybór ikony i koloru.
 
 ## 2. Problem użytkownika
-Użytkownicy mają trudność w utrzymaniu roślin w dobrej kondycji z powodu braku łatwego dostępu do uporządkowanych instrukcji pielęgnacji, trudności w śledzeniu historii działań oraz braku prostego systemu przypomnień opartych na realnych datach wykonania. Greenie rozwiązuje ten problem poprzez prywatny, uporządkowany rejestr roślin oraz logikę harmonogramu zależną od sezonu i faktycznych działań użytkownika.
+Użytkownicy mają trudność w utrzymaniu roślin w dobrej kondycji z powodu braku łatwego dostępu do uporządkowanych instrukcji pielęgnacji, trudności w śledzeniu historii działań oraz braku prostego systemu przypomnień opartych na realnych datach wykonania. 
+Greenie rozwiązuje ten problem poprzez prywatny, uporządkowany rejestr roślin oraz logikę harmonogramu zależną od sezonu i faktycznych działań użytkownika.
 
 ## 3. Wymagania funkcjonalne
 1. Uwierzytelnianie i dostęp
