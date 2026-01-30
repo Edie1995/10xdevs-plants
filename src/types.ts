@@ -11,25 +11,26 @@ export type DifficultyLevel = Enums<"difficulty_level">;
 export type Season = Enums<"season">;
 
 // Shared API envelope DTOs.
-export type ApiErrorDto = {
+export interface ApiErrorDto {
   code: string;
   message: string;
   details?: Json;
-};
+}
 
-export type PaginationDto = {
+export interface PaginationDto {
   page: number;
   limit: number;
   total: number;
   total_pages: number;
-};
+}
 
-export type ApiResponseDto<T> = {
+export interface ApiResponseDto<T> {
   success: boolean;
   data: T | null;
   error: ApiErrorDto | null;
   pagination?: PaginationDto;
-};
+  message?: string;
+}
 
 // Public-facing DTOs (hide user_id by default).
 export type PlantCardPublicDto = Omit<PlantCardRow, "user_id">;
@@ -50,9 +51,15 @@ export type PlantCardListItemDto = Pick<
   | "updated_at"
 >;
 
+export interface PlantCardListResult {
+  items: PlantCardListItemDto[];
+  pagination: PaginationDto;
+}
+
 export type DiseaseDto = Omit<DiseaseEntryRow, "plant_card_id">;
 export type SeasonalScheduleDto = Omit<SeasonalScheduleRow, "plant_card_id">;
 export type CareLogDto = Omit<CareLogRow, "plant_card_id">;
+export type CareActionsListResultDto = CareLogDto[];
 
 export type PlantCardDetailDto = PlantCardPublicDto & {
   diseases: DiseaseDto[];
@@ -60,37 +67,34 @@ export type PlantCardDetailDto = PlantCardPublicDto & {
   recent_care_logs: CareLogDto[];
 };
 
-export type DashboardStatsDto = {
+export interface DashboardStatsDto {
   total_plants: number;
   urgent: number;
   warning: number;
-};
+}
 
-export type DashboardDto = {
+export interface DashboardDto {
   requires_attention: PlantCardListItemDto[];
   all_plants: PlantCardListItemDto[];
   stats: DashboardStatsDto;
-};
+}
 
 // Query DTOs
-export type PlantListQueryDto = {
+export interface PlantListQueryDto {
   page?: number;
   limit?: number;
   search?: string;
   sort?: "priority" | "name" | "created";
   direction?: "asc" | "desc";
   needs_attention?: boolean;
-};
+}
 
-export type CareActionsQueryDto = {
+export interface CareActionsQueryDto {
   action_type?: CareActionType;
   limit?: number;
-};
+}
 
-export type DashboardQueryDto = Pick<
-  PlantListQueryDto,
-  "page" | "limit" | "search" | "sort" | "direction"
->;
+export type DashboardQueryDto = Pick<PlantListQueryDto, "page" | "limit" | "search" | "sort" | "direction">;
 
 // Command models
 type PlantCardInsert = TablesInsert<"plant_card">;
@@ -114,17 +118,14 @@ export type PlantCardCreateCommand = Omit<
 };
 
 // Update allows partial fields, with optional nested upserts.
-export type PlantCardUpdateCommand = Partial<
-  Omit<PlantCardCreateCommand, "schedules" | "diseases">
-> & {
+export type PlantCardUpdateCommand = Partial<Omit<PlantCardCreateCommand, "schedules" | "diseases">> & {
   schedules?: SeasonalScheduleCommand[];
   diseases?: DiseaseCommand[];
 };
 
-export type DiseaseCommand = Omit<
-  DiseaseInsert,
-  "id" | "created_at" | "updated_at" | "plant_card_id"
->;
+export type DiseaseCommand = Omit<DiseaseInsert, "id" | "created_at" | "updated_at" | "plant_card_id">;
+
+export type DiseaseUpdateCommand = Partial<DiseaseCommand>;
 
 // Schedules are always sent as full season entries in the API.
 export type SeasonalScheduleCommand = Pick<
@@ -132,24 +133,26 @@ export type SeasonalScheduleCommand = Pick<
   "season" | "watering_interval" | "fertilizing_interval"
 >;
 
-export type UpdateSchedulesCommand = {
+export interface UpdateSchedulesCommand {
   schedules: SeasonalScheduleCommand[];
-};
+}
 
-export type CareActionCreateCommand = {
+export interface CareActionCreateCommand {
   action_type: CareLogRow["action_type"];
   performed_at?: CareLogRow["performed_at"];
-};
+}
 
-export type CareActionResultDto = {
+export interface CareActionResultDto {
   care_log: CareLogDto;
   plant: PlantCardListItemDto;
-};
+}
+
+export type PlantTabKey = "basic" | "schedule" | "diseases" | "history";
 
 // Supabase auth profile mirror; user id is linked to plant_card.user_id.
-export type UserProfileDto = {
+export interface UserProfileDto {
   id: PlantCardRow["user_id"];
   email: string;
   created_at: string;
   user_metadata: Json;
-};
+}

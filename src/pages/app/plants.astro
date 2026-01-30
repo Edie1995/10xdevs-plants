@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PlantsListView from "@/components/plants/PlantsListView";
+
+const initialUrl = Astro.url.toString();
+---
+
+<Layout title="Rosliny">
+  <PlantsListView client:load initialUrl={initialUrl} />
+</Layout>

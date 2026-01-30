@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import { Toaster } from "@/components/ui/sonner";
+import logo from "../../Gemini_Generated_Image_t3nziqt3nziqt3nz.png";
 
 interface Props {
   title?: string;
@@ -18,7 +20,16 @@ const { title = "10x Astro Starter" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    <header class="border-b border-neutral-200 bg-white">
+      <div class="mx-auto flex w-full max-w-5xl items-center gap-3 px-6 py-4">
+        <a href="/" class="flex items-center gap-3 text-neutral-900">
+          <img src={logo.src} alt="Greenie logo" class="h-10 w-10 rounded-full" loading="lazy" />
+          <span class="text-lg font-semibold">Greenie</span>
+        </a>
+      </div>
+    </header>
     <slot />
+    <Toaster client:load richColors />
   </body>
 </html>
 

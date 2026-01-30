@@ -5,11 +5,15 @@
 - `season`: `('spring', 'summer', 'autumn', 'winter')`
 - `care_action_type`: `('watering', 'fertilizing')`
 
-**profiles**
-- `id` uuid, PK, FK -> `auth.users(id)`, ON DELETE CASCADE
-- `nickname` varchar(50), NULL
+**users**
+
+This table is managed by Supabase Auth
+
+- `id` UUID, PRIMARY KEY
+- `email` varchar(255), NOT NULL, UNIQUE
+- `encrypted_password` varchar, NOT NULL
 - `created_at` timestamptz, NOT NULL, DEFAULT now()
-- `updated_at` timestamptz, NOT NULL, DEFAULT now()
+- `confirmed_at` timestamptz, NOT NULL, DEFAULT now()
 
 **plant_card**
 - `id` uuid, PK, DEFAULT gen_random_uuid()
@@ -62,8 +66,7 @@
 - CHECK (`performed_at` <= CURRENT_DATE)
 
 2. Relacje między tabelami
-- `auth.users` 1:1 `profiles` (prywatny profil użytkownika)
-- `auth.users` 1:N `plant_card`
+- `users` 1:N `plant_card`
 - `plant_card` 1:N `disease_entry`
 - `plant_card` 1:N `seasonal_schedule`
 - `plant_card` 1:N `care_log`
@@ -80,9 +83,7 @@
 - `care_log`: INDEX on (`plant_card_id`, `action_type`, `performed_at`)
 
 4. Zasady PostgreSQL (RLS)
-- Włącz RLS na: `profiles`, `plant_card`, `disease_entry`, `seasonal_schedule`, `care_log`.
-- `profiles`:
-  - SELECT/INSERT/UPDATE/DELETE: `id = auth.uid()`
+- Włącz RLS na: `plant_card`, `disease_entry`, `seasonal_schedule`, `care_log`.
 - `plant_card`:
   - SELECT/INSERT/UPDATE/DELETE: `user_id = auth.uid()`
 - `disease_entry`:

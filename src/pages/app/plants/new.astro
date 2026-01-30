@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import NewPlantView from "@/components/plants/NewPlantView";
+
+const initialUrl = Astro.url.toString();
+---
+
+<Layout title="Dodaj roslina">
+  <NewPlantView client:load initialUrl={initialUrl} />
+</Layout>

@@ -1,0 +1,25 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PlantView from "@/components/plants/PlantView";
+import type { PlantTabKey } from "@/types";
+
+const initialUrl = Astro.url.toString();
+const plantId = Astro.params.id ?? "";
+const tabParam = Astro.url.searchParams.get("tab") ?? "";
+const returnTo = Astro.url.searchParams.get("returnTo");
+const editParam = Astro.url.searchParams.get("edit");
+const isValidTab = ["basic", "schedule", "diseases", "history"].includes(tabParam);
+const initialTab = (isValidTab ? tabParam : "basic") as PlantTabKey;
+const initialEditMode = editParam === "1" || editParam === "true";
+---
+
+<Layout title="Szczegoly rosliny">
+  <PlantView
+    client:load
+    plantId={plantId}
+    initialUrl={initialUrl}
+    initialTab={initialTab}
+    initialEditMode={initialEditMode}
+    returnTo={returnTo}
+  />
+</Layout>

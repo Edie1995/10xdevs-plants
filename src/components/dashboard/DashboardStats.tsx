@@ -1,0 +1,30 @@
+import type { DashboardStatsVM } from "../../lib/dashboard/dashboard-viewmodel";
+import { Card, CardContent } from "../ui/card";
+
+type DashboardStatsProps = {
+  stats: DashboardStatsVM;
+  isLoading?: boolean;
+};
+
+export default function DashboardStats({ stats, isLoading }: DashboardStatsProps) {
+  const tiles = [
+    { label: "Wszystkie", value: stats.totalPlants },
+    { label: "Pilne", value: stats.urgent },
+    { label: "Na dzis", value: stats.warning },
+  ];
+
+  return (
+    <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+      {tiles.map((tile) => (
+        <Card key={tile.label}>
+          <CardContent className="px-5 py-4">
+            <p className="text-xs uppercase tracking-wide text-neutral-500">{tile.label}</p>
+            <p className="mt-3 text-2xl font-semibold text-neutral-900">
+              {isLoading ? "—" : tile.value}
+            </p>
+          </CardContent>
+        </Card>
+      ))}
+    </section>
+  );
+}
