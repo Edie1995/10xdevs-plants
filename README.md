@@ -43,6 +43,12 @@ Tooling
 - Prettier
 - Husky + lint-staged
 
+Testing
+- [Vitest](https://vitest.dev/) (unit & integration tests for TypeScript)
+- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) (optional, for React UI tests)
+- [MSW](https://mswjs.io/) (optional, API mocking in UI tests)
+- [Playwright](https://playwright.dev/) (end-to-end tests)
+
 ## Getting started locally
 
 Prerequisites

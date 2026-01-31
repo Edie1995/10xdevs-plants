@@ -5,7 +5,7 @@ Celem jest zaprojektowanie modułu autentykacji, który spełnia wymagania PRD:
 - **US-037**: dedykowane strony logowania i rejestracji, e-mail + hasło + potwierdzenie hasła, przycisk logowania i wylogowania w prawym górnym rogu, odzyskiwanie hasła, **bez zewnętrznych providerów** (Google/GitHub itd.).
 - **US-036**: brak dostępu do dashboardu i kolekcji roślin bez logowania, a także **ochrona przed dostępem do cudzych danych** (izolacja danych per użytkownik).
 - **US-001 / US-002 / US-004 / US-006**: rejestracja, logowanie, odzyskiwanie hasła, ochrona dostępu (pokryte przez routing + API).
-- **US-005 (częściowo)**: zmiana hasła (wymaga podania aktualnego hasła). Nick nie jest częścią profilu i nie jest obsługiwany w MVP.
+- **US-005 **: zmiana hasła (wymaga podania aktualnego hasła). 
 
 
 
@@ -117,7 +117,7 @@ To jest zmiana UI, ale nie narusza kontraktów API ani działania React komponen
 - `src/pages/auth/callback.astro`
 
 #### Astro pages (nowe, private)
-- `src/pages/app/profile.astro` (zmiana hasła)
+- `src/pages/app/profile.astro` (US-005)
 
 Wszystkie: rekomendowane `export const prerender = false;` (dla pewności SSR w trybie `output: "server"`).
 
@@ -173,7 +173,7 @@ Wspólny cel: szybki feedback, ale źródłem prawdy jest walidacja serwerowa (Z
 - nowe hasło + potwierdzenie: jak w rejestracji
 - dodatkowo: stan “brak aktywnej sesji recovery” → CTA “Wyślij link ponownie” (prowadzi do forgot-password)
 
-**Zmiana hasła (`/app/profile`) (US-005 częściowo)**
+**Zmiana hasła (`/app/profile`) (US-005)**
 - zmiana hasła:
   - `currentPassword`: wymagane
   - `newPassword` + `confirmNewPassword`: jak w rejestracji (min 8)
@@ -214,7 +214,7 @@ Wymóg PRD (US-001): po rejestracji user jest zalogowany.
   - to jest niezgodne z US-001; należy w konfiguracji Supabase wyłączyć email confirmation dla MVP
   - lub w UI jasno pokazać “Sprawdź e-mail…” (wariant awaryjny)
 
-#### S6: Zmiana hasła (US-005 częściowo)
+#### S6: Zmiana hasła (US-005)
 - User wchodzi na `/app/profile`
 - Zmiana hasła:
   - UI wymaga `currentPassword` oraz `newPassword` + `confirmNewPassword`

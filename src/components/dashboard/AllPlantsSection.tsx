@@ -1,8 +1,4 @@
-import type {
-  DashboardQueryState,
-  PaginationVM,
-  PlantCardVM,
-} from "../../lib/dashboard/dashboard-viewmodel";
+import type { DashboardQueryState, PaginationVM, PlantCardVM } from "../../lib/dashboard/dashboard-viewmodel";
 import EmptyState from "../common/EmptyState";
 import Pagination from "../common/Pagination";
 import PlantCard from "../plants/PlantCard";
@@ -47,12 +43,11 @@ export default function AllPlantsSection({
   onCareActionCompleted,
 }: AllPlantsSectionProps) {
   const handlePatch = (patch: Partial<DashboardQueryState>) => {
-    const resetPage =
-      "search" in patch || "sort" in patch || "direction" in patch || "limit" in patch;
+    const resetPage = "search" in patch || "sort" in patch || "direction" in patch || "limit" in patch;
     onQueryChange({
       ...query,
       ...patch,
-      page: resetPage ? 1 : query.page,
+      page: resetPage ? 1 : (patch.page ?? query.page),
     });
   };
 
@@ -75,11 +70,7 @@ export default function AllPlantsSection({
           <div className="grid gap-4 md:grid-cols-2">
             {showSkeletons ? buildSkeletons(4) : null}
             {items.map((plant) => (
-              <PlantCard
-                key={plant.id}
-                plant={plant}
-                onCareActionCompleted={onCareActionCompleted}
-              />
+              <PlantCard key={plant.id} plant={plant} onCareActionCompleted={onCareActionCompleted} />
             ))}
           </div>
 

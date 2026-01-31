@@ -31,7 +31,7 @@ const buildSkeletons = (count: number) =>
     />
   ));
 
-const buildSections = (items: PlantCardVM[]) => {
+export const buildSections = (items: PlantCardVM[]) => {
   const urgent = items.filter((item) => item.statusPriority === 0);
   const today = items.filter((item) => item.statusPriority === 1);
   const ok = items.filter((item) => item.statusPriority === 2);
@@ -43,6 +43,16 @@ const buildSections = (items: PlantCardVM[]) => {
   ].filter((section) => section.items.length > 0);
 };
 
+export const shouldShowSkeletons = ({
+  isLoading,
+  items,
+  emptyState,
+}: {
+  isLoading: boolean;
+  items: PlantCardVM[];
+  emptyState?: EmptyStateConfig;
+}) => Boolean(isLoading && items.length === 0 && !emptyState);
+
 export default function PlantsListContent({
   items,
   isLoading,
@@ -52,7 +62,7 @@ export default function PlantsListContent({
   onRequestEdit,
   onCareActionCompleted,
 }: PlantsListContentProps) {
-  const showSkeletons = Boolean(isLoading && items.length === 0 && !emptyState);
+  const showSkeletons = shouldShowSkeletons({ isLoading, items, emptyState });
 
   if (items.length === 0 && emptyState) {
     return <EmptyState {...emptyState} />;

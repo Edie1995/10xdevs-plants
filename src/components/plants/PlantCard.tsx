@@ -42,7 +42,7 @@ const dueToneClasses: Record<PlantCardVM["dueDatesTone"]["watering"], string> = 
   none: "text-neutral-800",
 };
 
-const getInlineErrorMessage = (error: ApiErrorViewModel) => {
+export const getInlineErrorMessage = (error: ApiErrorViewModel) => {
   if (error.code === "fertilizing_disabled") {
     return "Nawozenie jest wylaczone w tym sezonie.";
   }
@@ -56,6 +56,63 @@ const getInlineErrorMessage = (error: ApiErrorViewModel) => {
   }
 
   return error.message;
+};
+
+export const handlePlantCardError = ({
+  error,
+  scheduleState,
+  plantId,
+  setActionError,
+  setState,
+  onCareActionCompleted,
+  toastError,
+}: {
+  error: ApiErrorViewModel;
+  scheduleState: PlantScheduleStateVM;
+  plantId: string;
+  setActionError: (error: ApiErrorViewModel | null) => void;
+  setState: (plantId: string, next: PlantScheduleStateVM) => void;
+  onCareActionCompleted?: () => void;
+  toastError: (message: string) => void;
+}) => {
+  if (error.httpStatus === 401) {
+    const redirectTo = encodeURIComponent(window.location.href);
+    window.location.href = `/auth/login?redirectTo=${redirectTo}`;
+    return;
+  }
+
+  if (error.httpStatus === 404 || error.code === "not_found") {
+    setActionError({
+      ...error,
+      message: "Nie znaleziono rosliny. Odswiezam liste.",
+    });
+    onCareActionCompleted?.();
+    toastError("Nie znaleziono rosliny. Lista zostanie odswiezona.");
+    return;
+  }
+
+  if (error.httpStatus && error.httpStatus >= 500) {
+    toastError("Cos poszlo nie tak. Sprobuj ponownie.");
+  }
+
+  setActionError(error);
+
+  if (error.code === "schedule_missing" || error.code === "schedule_incomplete") {
+    const nextState: PlantScheduleStateVM = {
+      status: "missing",
+      error,
+      lastCheckedAt: Date.now(),
+    };
+    setState(plantId, nextState);
+  }
+
+  if (error.code === "fertilizing_disabled") {
+    setState(plantId, {
+      ...scheduleState,
+      error,
+      lastCheckedAt: Date.now(),
+    });
+  }
 };
 
 const iconMap: Record<string, string> = {
@@ -88,46 +145,16 @@ export default function PlantCard({
   const iconLabel = plant.iconKey ?? plant.name.charAt(0).toUpperCase();
   const iconSrc = plant.iconKey ? iconMap[plant.iconKey] : undefined;
 
-  const handleError = (error: ApiErrorViewModel) => {
-    if (error.httpStatus === 401) {
-      const redirectTo = encodeURIComponent(window.location.href);
-      window.location.href = `/auth/login?redirectTo=${redirectTo}`;
-      return;
-    }
-
-    if (error.httpStatus === 404 || error.code === "not_found") {
-      setActionError({
-        ...error,
-        message: "Nie znaleziono rosliny. Odswiezam liste.",
-      });
-      onCareActionCompleted?.();
-      toast.error("Nie znaleziono rosliny. Lista zostanie odswiezona.");
-      return;
-    }
-
-    if (error.httpStatus && error.httpStatus >= 500) {
-      toast.error("Cos poszlo nie tak. Sprobuj ponownie.");
-    }
-
-    setActionError(error);
-
-    if (error.code === "schedule_missing" || error.code === "schedule_incomplete") {
-      const nextState: PlantScheduleStateVM = {
-        status: "missing",
-        error,
-        lastCheckedAt: Date.now(),
-      };
-      setState(plant.id, nextState);
-    }
-
-    if (error.code === "fertilizing_disabled") {
-      setState(plant.id, {
-        ...scheduleState,
-        error,
-        lastCheckedAt: Date.now(),
-      });
-    }
-  };
+  const handleError = (error: ApiErrorViewModel) =>
+    handlePlantCardError({
+      error,
+      scheduleState,
+      plantId: plant.id,
+      setActionError,
+      setState,
+      onCareActionCompleted,
+      toastError: toast.error,
+    });
 
   const scheduleBlocking = scheduleState.status === "missing" || scheduleState.status === "incomplete";
 

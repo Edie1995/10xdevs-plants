@@ -14,3 +14,9 @@ Backend - Supabase jako kompleksowe rozwiązanie backendowe:
 CI/CD i Hosting:
 - Github Actions do tworzenia pipeline’ów CI/CD
 - DigitalOcean do hostowania aplikacji za pośrednictwem obrazu docker
+
+Testy:
+- Testy jednostkowe i integracyjne (TypeScript): Vitest
+- Testy UI (React) (opcjonalnie): Testing Library
+- Mockowanie API/fetch w testach UI (opcjonalnie): MSW
+- Testy E2E: Playwright (z możliwością użycia trace/video do diagnozowania flaky testów)
