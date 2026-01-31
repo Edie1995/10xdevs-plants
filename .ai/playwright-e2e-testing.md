@@ -1,6 +1,10 @@
-# AI Rules for {{project-name}}
+# AI Rules for Greenie
 
-{{project-description}}
+Greenie to webowa aplikacja typu utility do prywatnego zarządzania pielęgnacją roślin domowych i ogrodowych. 
+Produkt jest dostępny wyłącznie po zalogowaniu i działa online jako responsywna aplikacja webowa. 
+Użytkownik buduje własną bazę roślin od zera, zapisuje instrukcje pielęgnacji, prowadzi dziennik działań oraz otrzymuje informację o zbliżających się terminach podlewania i nawożenia. 
+W MVP nie ma funkcji społecznościowych, udostępniania treści, aplikacji mobilnej ani zaawansowanych multimediów. 
+Identyfikacja roślin odbywa się poprzez wybór ikony i koloru.
 
 ## TESTING
 

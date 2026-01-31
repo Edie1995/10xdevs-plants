@@ -4,7 +4,11 @@ import { toast } from "sonner";
 import type { ApiErrorViewModel } from "../../lib/api/api-client";
 import type { DiseaseDto } from "../../types";
 import { useDiseasesCrud } from "../hooks/useDiseasesCrud";
-import { type DiseaseDraftVM, type DiseaseErrorsVM, validateDiseaseDraft } from "../../lib/plants/plant-diseases-viewmodel";
+import {
+  type DiseaseDraftVM,
+  type DiseaseErrorsVM,
+  validateDiseaseDraft,
+} from "../../lib/plants/plant-diseases-viewmodel";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { cn } from "../../lib/utils";
@@ -28,7 +32,7 @@ export default function PlantDiseasesTab({ plantId, initialDiseases, onApiError 
   const { items, hasItems, add, startEdit, cancelEdit, updateDraft, save, requestDelete, toggleOpen } = useDiseasesCrud(
     plantId,
     initialDiseases,
-    onApiError,
+    onApiError
   );
   const [addDraft, setAddDraft] = useState<DiseaseDraftVM>(emptyDraft);
   const [addErrors, setAddErrors] = useState<DiseaseErrorsVM | null>(null);
@@ -220,7 +224,9 @@ export default function PlantDiseasesTab({ plantId, initialDiseases, onApiError 
                         onChange={(event) => updateDraft(item.id, { symptoms: event.target.value })}
                         maxLength={2000}
                         aria-invalid={Boolean(item.errors?.fields?.symptoms)}
-                        aria-describedby={item.errors?.fields?.symptoms ? `disease-symptoms-${item.id}-error` : undefined}
+                        aria-describedby={
+                          item.errors?.fields?.symptoms ? `disease-symptoms-${item.id}-error` : undefined
+                        }
                       />
                       {renderFieldError(item.errors?.fields?.symptoms, `disease-symptoms-${item.id}-error`)}
                     </div>
@@ -258,7 +264,12 @@ export default function PlantDiseasesTab({ plantId, initialDiseases, onApiError 
                       >
                         {item.isSaving ? "Zapisywanie..." : "Zapisz"}
                       </Button>
-                      <Button type="button" variant="outline" onClick={() => cancelEdit(item.id)} disabled={item.isSaving}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => cancelEdit(item.id)}
+                        disabled={item.isSaving}
+                      >
                         Anuluj
                       </Button>
                       <Button

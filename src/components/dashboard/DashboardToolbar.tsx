@@ -4,38 +4,27 @@ import type { FormEvent } from "react";
 import type { DashboardQueryState } from "../../lib/dashboard/dashboard-viewmodel";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
-type DashboardToolbarProps = {
+interface DashboardToolbarProps {
   query: DashboardQueryState;
   onChange: (patch: Partial<DashboardQueryState>) => void;
   onSubmit: (search: string | undefined) => void;
   onClear: () => void;
-};
+}
 
-const SORT_OPTIONS: Array<{ value: DashboardQueryState["sort"]; label: string }> = [
+const SORT_OPTIONS: { value: DashboardQueryState["sort"]; label: string }[] = [
   { value: "priority", label: "Priorytet" },
   { value: "name", label: "Nazwa" },
   { value: "created", label: "Utworzenia" },
 ];
 
-const DIRECTION_OPTIONS: Array<{ value: DashboardQueryState["direction"]; label: string }> = [
+const DIRECTION_OPTIONS: { value: DashboardQueryState["direction"]; label: string }[] = [
   { value: "asc", label: "Rosnaco" },
   { value: "desc", label: "Malejaco" },
 ];
 
-export default function DashboardToolbar({
-  query,
-  onChange,
-  onSubmit,
-  onClear,
-}: DashboardToolbarProps) {
+export default function DashboardToolbar({ query, onChange, onSubmit, onClear }: DashboardToolbarProps) {
   const [searchValue, setSearchValue] = useState(query.search ?? "");
   const [error, setError] = useState<string | null>(null);
 
@@ -112,9 +101,7 @@ export default function DashboardToolbar({
         </label>
         <Select
           value={query.direction}
-          onValueChange={(value) =>
-            onChange({ direction: value as DashboardQueryState["direction"] })
-          }
+          onValueChange={(value) => onChange({ direction: value as DashboardQueryState["direction"] })}
         >
           <SelectTrigger id="direction" className="w-[160px]">
             <SelectValue placeholder="Wybierz" />

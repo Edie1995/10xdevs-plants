@@ -8,8 +8,7 @@ export interface PlantBackLinkProps {
   fallbackHref?: string;
 }
 
-const isSafePlantsPath = (url: URL) =>
-  url.origin === window.location.origin && url.pathname.startsWith("/app/plants");
+const isSafePlantsPath = (url: URL) => url.origin === window.location.origin && url.pathname.startsWith("/app/plants");
 
 const resolveSafeHref = (returnTo?: string | null, fallbackHref = "/app/plants") => {
   if (typeof window === "undefined") {

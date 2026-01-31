@@ -2,32 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 
 import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import type { ApiErrorViewModel } from "../../lib/api/api-client";
 import { apiPost } from "../../lib/api/api-client";
-import type {
-  CareActionCreateCommand,
-  CareActionResultDto,
-} from "../../types";
+import type { CareActionCreateCommand, CareActionResultDto } from "../../types";
 import type { PlantScheduleStateVM } from "../../lib/dashboard/dashboard-viewmodel";
-import {
-  formatUtcDateOnly,
-  parseDateOnlyToUtc,
-  toUtcDateOnly,
-} from "../../lib/services/care-schedule.utils";
+import { formatUtcDateOnly, parseDateOnlyToUtc, toUtcDateOnly } from "../../lib/services/care-schedule.utils";
 import { isFertilizingDisabledForDate } from "../../lib/dashboard/schedule.utils";
 import { toast } from "sonner";
 
 type CareActionType = "watering" | "fertilizing";
 
-type BackdateCareActionModalProps = {
+interface BackdateCareActionModalProps {
   open: boolean;
   actionType: CareActionType;
   plantId: string;
@@ -35,7 +21,8 @@ type BackdateCareActionModalProps = {
   onOpenChange: (open: boolean) => void;
   onSubmitted: () => void;
   onError: (error: ApiErrorViewModel) => void;
-};
+  dataTestIdPrefix?: string;
+}
 
 export default function BackdateCareActionModal({
   open,
@@ -45,6 +32,7 @@ export default function BackdateCareActionModal({
   onOpenChange,
   onSubmitted,
   onError,
+  dataTestIdPrefix,
 }: BackdateCareActionModalProps) {
   const [value, setValue] = useState<string>(() => formatUtcDateOnly(toUtcDateOnly(new Date())));
   const [inlineError, setInlineError] = useState<string | null>(null);
@@ -59,8 +47,7 @@ export default function BackdateCareActionModal({
 
   const maxDate = useMemo(() => formatUtcDateOnly(toUtcDateOnly(new Date())), []);
 
-  const scheduleBlocking =
-    scheduleState.status === "missing" || scheduleState.status === "incomplete";
+  const scheduleBlocking = scheduleState.status === "missing" || scheduleState.status === "incomplete";
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -95,10 +82,7 @@ export default function BackdateCareActionModal({
       action_type: actionType,
       performed_at: value,
     };
-    const result = await apiPost<CareActionResultDto>(
-      `/api/plants/${plantId}/care-actions`,
-      payload,
-    );
+    const result = await apiPost<CareActionResultDto>(`/api/plants/${plantId}/care-actions`, payload);
     setIsSubmitting(false);
 
     if (result.error) {
@@ -126,13 +110,13 @@ export default function BackdateCareActionModal({
     onSubmitted();
   };
 
+  const testIdBase = dataTestIdPrefix ? `${dataTestIdPrefix}-${actionType}` : undefined;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent data-test-id={testIdBase ? `${testIdBase}-modal` : undefined}>
         <DialogHeader>
-          <DialogTitle>
-            {actionType === "watering" ? "Ustaw date podlewania" : "Ustaw date nawozenia"}
-          </DialogTitle>
+          <DialogTitle>{actionType === "watering" ? "Ustaw date podlewania" : "Ustaw date nawozenia"}</DialogTitle>
           <DialogDescription>Wybierz date, aby zapisac akcje wstecz.</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -145,6 +129,7 @@ export default function BackdateCareActionModal({
               className="rounded-md border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
               onChange={(event) => setValue(event.target.value)}
               required
+              data-test-id={testIdBase ? `${testIdBase}-date-input` : undefined}
             />
           </label>
           {inlineError ? <p className="text-sm text-red-600">{inlineError}</p> : null}
@@ -152,7 +137,11 @@ export default function BackdateCareActionModal({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Anuluj
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              data-test-id={testIdBase ? `${testIdBase}-submit` : undefined}
+            >
               Zapisz
             </Button>
           </DialogFooter>

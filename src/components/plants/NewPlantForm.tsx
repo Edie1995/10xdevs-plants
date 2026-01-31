@@ -41,7 +41,7 @@ export default function NewPlantForm({
   scheduleError,
 }: NewPlantFormProps) {
   return (
-    <form className="mt-8 space-y-6" onSubmit={onSubmit}>
+    <form className="mt-8 space-y-6" onSubmit={onSubmit} data-test-id="new-plant-form">
       {errors.form ? (
         <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
           {errors.form}

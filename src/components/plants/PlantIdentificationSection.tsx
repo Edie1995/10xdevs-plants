@@ -31,11 +31,7 @@ const iconOptions: PlantIconOption[] = [
   { key: "12", label: "Ikona 12", src: icon12 },
 ];
 
-export default function PlantIdentificationSection({
-  values,
-  errors,
-  onChange,
-}: PlantIdentificationSectionProps) {
+export default function PlantIdentificationSection({ values, errors, onChange }: PlantIdentificationSectionProps) {
   const iconError = errors.fields?.icon_key;
   const colorError = errors.fields?.color_hex;
 
@@ -56,19 +52,12 @@ export default function PlantIdentificationSection({
                   key={option.key}
                   type="button"
                   variant={isActive ? "default" : "outline"}
-                  className={cn(
-                    "h-12 w-12 justify-center p-0",
-                    isActive && "ring-2 ring-emerald-500 ring-offset-2"
-                  )}
+                  className={cn("h-12 w-12 justify-center p-0", isActive && "ring-2 ring-emerald-500 ring-offset-2")}
                   aria-label={option.label}
                   aria-pressed={isActive}
                   onClick={() => onChange({ icon_key: option.key })}
                 >
-                  {option.src ? (
-                    <img src={option.src} alt="" className="h-10 w-10" loading="lazy" />
-                  ) : (
-                    option.key
-                  )}
+                  {option.src ? <img src={option.src} alt="" className="h-10 w-10" loading="lazy" /> : option.key}
                 </Button>
               );
             })}

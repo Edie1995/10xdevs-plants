@@ -137,7 +137,7 @@ export default function QuickActions({
   };
 
   return (
-    <div className="mt-4 space-y-2">
+    <div className="mt-4 space-y-2" data-test-id={`plant-quick-actions-${plantId}`}>
       <div className="flex flex-wrap gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -148,6 +148,7 @@ export default function QuickActions({
               onPointerUp={() => endHold("watering")}
               onPointerLeave={() => cancelHold("watering")}
               onPointerCancel={() => cancelHold("watering")}
+              data-test-id={`plant-action-water-${plantId}`}
             >
               Podlano dzis
             </Button>
@@ -172,6 +173,7 @@ export default function QuickActions({
                 onPointerLeave={() => cancelHold("fertilizing")}
                 onPointerCancel={() => cancelHold("fertilizing")}
                 className={fertilizingDisabled ? "pointer-events-none" : undefined}
+                data-test-id={`plant-action-fertilize-${plantId}`}
               >
                 Nawozono dzis
               </Button>
@@ -193,6 +195,7 @@ export default function QuickActions({
         onOpenChange={setModalOpen}
         onSubmitted={onSuccess}
         onError={onError}
+        dataTestIdPrefix={`plant-backdate-${plantId}`}
       />
     </div>
   );

@@ -69,7 +69,7 @@ export default function PlantScheduleTab({
 }: PlantScheduleTabProps) {
   const { editor, setSeasonPatch, reset, ensureLoaded, isLoading } = usePlantScheduleEditor(
     scheduleState,
-    loadSchedule,
+    loadSchedule
   );
   const [editMode, setEditMode] = useState(false);
   const [errors, setErrors] = useState<ReturnType<typeof validateScheduleEditor>>(null);
@@ -127,7 +127,7 @@ export default function PlantScheduleTab({
     setIsSubmitting(true);
     const response = await apiPut<SeasonalScheduleDto[]>(
       `/api/plants/${plantId}/schedules`,
-      buildUpdateSchedulesCommand(editor),
+      buildUpdateSchedulesCommand(editor)
     );
     setIsSubmitting(false);
 

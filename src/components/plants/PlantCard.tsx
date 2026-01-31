@@ -187,7 +187,7 @@ export default function PlantCard({
   }, [isMenuOpen]);
 
   return (
-    <Card>
+    <Card data-test-id={`plant-card-${plant.id}`}>
       <CardHeader className="gap-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
@@ -199,10 +199,17 @@ export default function PlantCard({
               {iconSrc ? <img src={iconSrc} alt="" className="h-10 w-10" /> : iconLabel}
             </div>
             <div>
-              <CardTitle className="text-lg">{plant.name}</CardTitle>
+              <CardTitle className="text-lg" data-test-id={`plant-name-${plant.id}`}>
+                {plant.name}
+              </CardTitle>
               {plant.statusPriority !== 2 ? (
                 <div className="mt-2">
-                  <Badge className={statusToneClasses[plant.statusTone]}>{plant.statusLabel}</Badge>
+                  <Badge
+                    className={statusToneClasses[plant.statusTone]}
+                    data-test-id={`plant-status-badge-${plant.id}`}
+                  >
+                    {plant.statusLabel}
+                  </Badge>
                 </div>
               ) : null}
             </div>
@@ -263,10 +270,13 @@ export default function PlantCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid gap-2 text-sm text-neutral-600">
+        <div className="grid gap-2 text-sm text-neutral-600" data-test-id={`plant-schedule-${plant.id}`}>
           <div className="flex items-center justify-between">
             <span>Podlewanie</span>
-            <span className={`rounded-md px-2 py-1 text-xs font-medium ${dueToneClasses[plant.dueDatesTone.watering]}`}>
+            <span
+              className={`rounded-md px-2 py-1 text-xs font-medium ${dueToneClasses[plant.dueDatesTone.watering]}`}
+              data-test-id={`plant-next-watering-${plant.id}`}
+            >
               {plant.nextWateringDisplay}
             </span>
           </div>
@@ -274,6 +284,7 @@ export default function PlantCard({
             <span>Nawozenie</span>
             <span
               className={`rounded-md px-2 py-1 text-xs font-medium ${dueToneClasses[plant.dueDatesTone.fertilizing]}`}
+              data-test-id={`plant-next-fertilizing-${plant.id}`}
             >
               {plant.nextFertilizingDisplay}
             </span>

@@ -76,11 +76,7 @@ export default function PlantTabPanel({
       );
     case "diseases":
       return (
-        <PlantDiseasesTab
-          plantId={plantId}
-          initialDiseases={plantDetail.diseases ?? []}
-          onApiError={onApiError}
-        />
+        <PlantDiseasesTab plantId={plantId} initialDiseases={plantDetail.diseases ?? []} onApiError={onApiError} />
       );
     case "history":
       return (

@@ -3,26 +3,16 @@ import type { PlantTabKey } from "../../types";
 export interface PlantTabsProps {
   activeTab: PlantTabKey;
   onTabChange: (tab: PlantTabKey) => void;
-  tabs: Array<{ key: PlantTabKey; label: string }>;
+  tabs: { key: PlantTabKey; label: string }[];
 }
 
-const TabButton = ({
-  isActive,
-  label,
-  onClick,
-}: {
-  isActive: boolean;
-  label: string;
-  onClick: () => void;
-}) => (
+const TabButton = ({ isActive, label, onClick }: { isActive: boolean; label: string; onClick: () => void }) => (
   <button
     type="button"
     role="tab"
     aria-selected={isActive}
     className={`rounded-md px-4 py-2 text-sm font-medium transition ${
-      isActive
-        ? "bg-emerald-700 text-white ring-2 ring-emerald-200"
-        : "text-neutral-700 hover:bg-neutral-100"
+      isActive ? "bg-emerald-700 text-white ring-2 ring-emerald-200" : "text-neutral-700 hover:bg-neutral-100"
     }`}
     onClick={onClick}
   >

@@ -90,9 +90,8 @@ export default function NewPlantView({ initialUrl }: NewPlantViewProps) {
     setValues((prev) => ({
       ...prev,
       diseases:
-        prev.diseases?.map((disease, diseaseIndex) =>
-          diseaseIndex === index ? { ...disease, ...patch } : disease
-        ) ?? [],
+        prev.diseases?.map((disease, diseaseIndex) => (diseaseIndex === index ? { ...disease, ...patch } : disease)) ??
+        [],
     }));
   };
 

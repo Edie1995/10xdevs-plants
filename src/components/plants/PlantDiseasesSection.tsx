@@ -36,6 +36,7 @@ export default function PlantDiseasesSection({
             checked={enabled}
             onChange={(event) => onToggleDiseases(event.target.checked)}
             className={cn("h-4 w-4 rounded border-neutral-300")}
+            data-test-id="new-plant-diseases-toggle"
           />
           Dodaj choroby
         </label>
@@ -57,7 +58,7 @@ export default function PlantDiseasesSection({
           ) : (
             <p className="text-sm text-neutral-500">Dodaj pierwsza chorobe, aby uzupelnic dane.</p>
           )}
-          <Button type="button" variant="outline" onClick={onAddDisease}>
+          <Button type="button" variant="outline" onClick={onAddDisease} data-test-id="new-plant-add-disease-button">
             Dodaj chorobe
           </Button>
         </div>

@@ -52,6 +52,7 @@ export default function PlantSchedulesSection({
             checked={enabled}
             onChange={(event) => onToggleSchedules(event.target.checked)}
             className={cn("h-4 w-4 rounded border-neutral-300")}
+            data-test-id="new-plant-schedule-toggle"
           />
           Ustaw harmonogram
         </label>

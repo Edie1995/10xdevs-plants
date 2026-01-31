@@ -1,8 +1,6 @@
 alter table plant_card
   drop column if exists status_priority;
 
-drop index if exists idx_plant_card_status_priority_name;
-
 alter table plant_card
   add column if not exists next_care_at timestamptz generated always as (
     nullif(

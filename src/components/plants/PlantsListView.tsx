@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import Pagination from "../common/Pagination";
+import EmptyState from "../common/EmptyState";
 import ConfirmDeletePlantDialog from "./ConfirmDeletePlantDialog";
 import PlantsListContent from "./PlantsListContent";
 import PlantsToolbar from "./PlantsToolbar";
@@ -98,7 +99,11 @@ export default function PlantsListView({ initialUrl }: PlantsListViewProps) {
             {isRefreshing ? "Odswiezanie danych..." : "Przegladaj swoje rosliny i dbaj o terminy."}
           </p>
         </div>
-        <Button type="button" onClick={() => (window.location.href = "/app/plants/new")}>
+        <Button
+          type="button"
+          data-test-id="plants-list-add-button"
+          onClick={() => (window.location.href = "/app/plants/new")}
+        >
           Dodaj roslina
         </Button>
       </div>
@@ -112,7 +117,8 @@ export default function PlantsListView({ initialUrl }: PlantsListViewProps) {
         />
       </section>
 
-      {error && (error.code === "empty_response" || (typeof error.httpStatus === "number" && error.httpStatus >= 500)) ? (
+      {error &&
+      (error.code === "empty_response" || (typeof error.httpStatus === "number" && error.httpStatus >= 500)) ? (
         <section className="mt-10 rounded-xl border border-red-200 bg-red-50 p-6">
           <h2 className="text-base font-semibold text-red-800">Cos poszlo nie tak.</h2>
           <p className="mt-2 text-sm text-red-700">

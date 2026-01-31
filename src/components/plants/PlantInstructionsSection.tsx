@@ -7,8 +7,8 @@ interface PlantInstructionsSectionProps {
   onChange: (patch: Partial<NewPlantFormValues>) => void;
 }
 
-  const textareaStyles =
-    "border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 aria-invalid:border-destructive dark:aria-invalid:ring-destructive/40 dark:bg-input/30 min-h-[120px] w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]";
+const textareaStyles =
+  "border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 aria-invalid:border-destructive dark:aria-invalid:ring-destructive/40 dark:bg-input/30 min-h-[120px] w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]";
 
 const maxLength = 2000;
 
@@ -84,9 +84,7 @@ export default function PlantInstructionsSection({ values, errors, onChange }: P
             onChange={(event) => onChange({ propagation_instructions: event.target.value })}
             maxLength={maxLength}
             aria-invalid={Boolean(propagationError)}
-            aria-describedby={
-              propagationError ? "propagation-instructions-error" : "propagation-instructions-counter"
-            }
+            aria-describedby={propagationError ? "propagation-instructions-error" : "propagation-instructions-counter"}
           />
           <div className="mt-1 flex items-center justify-between text-xs text-neutral-500">
             <span id="propagation-instructions-counter">
@@ -113,7 +111,9 @@ export default function PlantInstructionsSection({ values, errors, onChange }: P
             aria-describedby={notesError ? "plant-notes-error" : "plant-notes-counter"}
           />
           <div className="mt-1 flex items-center justify-between text-xs text-neutral-500">
-            <span id="plant-notes-counter">{(values.notes ?? "").length}/{maxLength}</span>
+            <span id="plant-notes-counter">
+              {(values.notes ?? "").length}/{maxLength}
+            </span>
             {notesError ? (
               <span id="plant-notes-error" className="text-red-600" role="alert">
                 {notesError}

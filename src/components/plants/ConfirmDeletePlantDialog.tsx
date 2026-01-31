@@ -2,14 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { apiDelete, type ApiErrorViewModel } from "../../lib/api/api-client";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import type { PlantCardVM } from "../../lib/dashboard/dashboard-viewmodel";
 
@@ -90,12 +83,7 @@ export default function ConfirmDeletePlantDialog({
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Anuluj
           </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={!plant || isDeleting}
-          >
+          <Button type="button" variant="destructive" onClick={handleDelete} disabled={!plant || isDeleting}>
             {isDeleting ? "Usuwanie..." : "Usun"}
           </Button>
         </DialogFooter>

@@ -9,7 +9,7 @@ interface FormActionsProps {
 export default function FormActions({ isSubmitting, disableSubmit, onCancel }: FormActionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button type="submit" disabled={isSubmitting || disableSubmit}>
+      <Button type="submit" disabled={isSubmitting || disableSubmit} data-test-id="new-plant-save-button">
         {isSubmitting ? "Zapisywanie..." : "Zapisz"}
       </Button>
       <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>

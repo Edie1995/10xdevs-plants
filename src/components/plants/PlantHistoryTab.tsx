@@ -14,7 +14,7 @@ export interface PlantHistoryTabProps {
   onApiError: (error: ApiErrorViewModel) => void;
 }
 
-const filterOptions: Array<{ value: CareActionsFilterVM["actionType"]; label: string }> = [
+const filterOptions: { value: CareActionsFilterVM["actionType"]; label: string }[] = [
   { value: "all", label: "Wszystko" },
   { value: "watering", label: "Podlewanie" },
   { value: "fertilizing", label: "Nawozenie" },
@@ -85,7 +85,10 @@ export default function PlantHistoryTab({ plantId, recentFromDetail, onApiError 
       {rows.length > 0 ? (
         <div className="mt-6 space-y-3">
           {rows.map((row) => (
-            <div key={row.id} className="flex items-center justify-between rounded-lg border border-neutral-200 px-4 py-3">
+            <div
+              key={row.id}
+              className="flex items-center justify-between rounded-lg border border-neutral-200 px-4 py-3"
+            >
               <div className="text-sm font-medium text-neutral-800">{row.actionTypeLabel}</div>
               <div className="text-sm text-neutral-600">{row.performedAtDisplay}</div>
             </div>

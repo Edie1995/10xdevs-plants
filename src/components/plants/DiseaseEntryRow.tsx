@@ -16,7 +16,10 @@ const textareaStyles =
 
 export default function DiseaseEntryRow({ index, value, error, onChange, onRemove }: DiseaseEntryRowProps) {
   return (
-    <div className="space-y-3 rounded-xl border border-neutral-200 bg-white p-4">
+    <div
+      className="space-y-3 rounded-xl border border-neutral-200 bg-white p-4"
+      data-test-id={`new-plant-disease-${index}`}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <label className="text-sm font-medium text-neutral-700" htmlFor={`disease-name-${index}`}>
@@ -24,6 +27,7 @@ export default function DiseaseEntryRow({ index, value, error, onChange, onRemov
           </label>
           <Input
             id={`disease-name-${index}`}
+            data-test-id={`new-plant-disease-name-${index}`}
             value={value.name ?? ""}
             onChange={(event) => onChange({ name: event.target.value })}
             maxLength={50}
@@ -37,7 +41,13 @@ export default function DiseaseEntryRow({ index, value, error, onChange, onRemov
             </p>
           ) : null}
         </div>
-        <Button type="button" variant="ghost" onClick={onRemove} className="text-red-600 hover:text-red-700">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onRemove}
+          className="text-red-600 hover:text-red-700"
+          data-test-id={`new-plant-disease-remove-${index}`}
+        >
           Usun
         </Button>
       </div>
@@ -48,6 +58,7 @@ export default function DiseaseEntryRow({ index, value, error, onChange, onRemov
         <textarea
           id={`disease-symptoms-${index}`}
           className={cn(textareaStyles)}
+          data-test-id={`new-plant-disease-symptoms-${index}`}
           value={value.symptoms ?? ""}
           onChange={(event) => onChange({ symptoms: event.target.value })}
           maxLength={2000}
@@ -67,6 +78,7 @@ export default function DiseaseEntryRow({ index, value, error, onChange, onRemov
         <textarea
           id={`disease-advice-${index}`}
           className={cn(textareaStyles)}
+          data-test-id={`new-plant-disease-advice-${index}`}
           value={value.advice ?? ""}
           onChange={(event) => onChange({ advice: event.target.value })}
           maxLength={2000}

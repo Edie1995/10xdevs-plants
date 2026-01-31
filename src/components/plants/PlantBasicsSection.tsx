@@ -16,12 +16,7 @@ const difficultyOptions: { value: DifficultyLevel; label: string }[] = [
   { value: "hard", label: "Trudny" },
 ];
 
-export default function PlantBasicsSection({
-  values,
-  errors,
-  onChange,
-  nameRequired = true,
-}: PlantBasicsSectionProps) {
+export default function PlantBasicsSection({ values, errors, onChange, nameRequired = true }: PlantBasicsSectionProps) {
   const nameError = errors.fields?.name;
   const soilError = errors.fields?.soil;
   const potError = errors.fields?.pot;
@@ -41,6 +36,7 @@ export default function PlantBasicsSection({
           </label>
           <Input
             id="plant-name"
+            data-test-id="new-plant-name-input"
             value={values.name}
             onChange={(event) => onChange({ name: event.target.value })}
             maxLength={50}
@@ -62,7 +58,12 @@ export default function PlantBasicsSection({
             value={values.difficulty ?? ""}
             onValueChange={(value) => onChange({ difficulty: value as DifficultyLevel })}
           >
-            <SelectTrigger id="plant-difficulty" className="w-full" aria-invalid={Boolean(difficultyError)}>
+            <SelectTrigger
+              id="plant-difficulty"
+              className="w-full"
+              aria-invalid={Boolean(difficultyError)}
+              data-test-id="new-plant-difficulty-select"
+            >
               <SelectValue placeholder="Wybierz" />
             </SelectTrigger>
             <SelectContent>
@@ -85,6 +86,7 @@ export default function PlantBasicsSection({
           </label>
           <Input
             id="plant-soil"
+            data-test-id="new-plant-soil-input"
             value={values.soil ?? ""}
             onChange={(event) => onChange({ soil: event.target.value })}
             maxLength={200}
@@ -104,6 +106,7 @@ export default function PlantBasicsSection({
           </label>
           <Input
             id="plant-pot"
+            data-test-id="new-plant-pot-input"
             value={values.pot ?? ""}
             onChange={(event) => onChange({ pot: event.target.value })}
             maxLength={200}
@@ -123,6 +126,7 @@ export default function PlantBasicsSection({
           </label>
           <Input
             id="plant-position"
+            data-test-id="new-plant-position-input"
             value={values.position ?? ""}
             onChange={(event) => onChange({ position: event.target.value })}
             maxLength={50}
