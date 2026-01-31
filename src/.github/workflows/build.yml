@@ -1,0 +1,23 @@
+name: Build and Test Workflow
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run ci
+      - name: Run unit tests
+        run: npm run test:unit
+      - name: Run end-to-end tests
+        run: npm run test:e2e
