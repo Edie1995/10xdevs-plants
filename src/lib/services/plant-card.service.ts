@@ -171,6 +171,7 @@ interface GetPlantDetailOptions {
 
 export const getPlantDetail = async (
   supabase: SupabaseClient,
+  userId: string,
   plantId: string,
   options: GetPlantDetailOptions = {}
 ): Promise<PlantCardDetailDto> => {
@@ -211,6 +212,7 @@ export const getPlantDetail = async (
     .from("plant_card")
     .select(plantCardColumns)
     .eq("id", plantId)
+    .eq("user_id", userId)
     .maybeSingle();
 
   if (plantError) {

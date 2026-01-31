@@ -165,11 +165,11 @@ export default function PlantCard({
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <div
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-sm font-semibold text-neutral-900"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 text-lg font-semibold text-neutral-900"
               style={{ backgroundColor: plant.colorHex ?? "#f5f5f5" }}
               aria-hidden="true"
             >
-              {iconSrc ? <img src={iconSrc} alt="" className="h-7 w-7" /> : iconLabel}
+              {iconSrc ? <img src={iconSrc} alt="" className="h-10 w-10" /> : iconLabel}
             </div>
             <div>
               <CardTitle className="text-lg">{plant.name}</CardTitle>

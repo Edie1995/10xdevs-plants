@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 
 import type { Json } from "../../db/database.types.ts";
-import { DEFAULT_USER_ID } from "../../db/supabase.client.ts";
 import { createPlantCard, listPlantCards } from "../../lib/services/plant-card.service.ts";
 import type { ApiResponseDto, PlantCardCreateCommand } from "../../types.ts";
 
@@ -143,8 +142,13 @@ export const GET: APIRoute = async ({ url, locals }) => {
     return errorResponse(400, "validation_error", "Invalid query parameters.", parsed.error.flatten() as Json);
   }
 
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
+
   try {
-    const result = await listPlantCards(locals.supabase, DEFAULT_USER_ID, parsed.data);
+    const result = await listPlantCards(locals.supabase, userId, parsed.data);
     return jsonResponse(200, {
       success: true,
       data: result.items,
@@ -184,8 +188,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return errorResponse(409, "duplicate_season", "Schedule seasons must be unique.");
   }
 
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
+
   try {
-    const plantCard = await createPlantCard(locals.supabase, DEFAULT_USER_ID, payload);
+    const plantCard = await createPlantCard(locals.supabase, userId, payload);
     return jsonResponse(201, {
       success: true,
       data: plantCard,

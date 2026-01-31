@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 
 import type { Json } from "../../../../db/database.types.ts";
-import { DEFAULT_USER_ID } from "../../../../db/supabase.client.ts";
 import { createDisease, listDiseases, ResourceNotFoundError } from "../../../../lib/services/diseases.service.ts";
 import type { ApiResponseDto, DiseaseCommand, DiseaseDto } from "../../../../types.ts";
 
@@ -102,10 +101,14 @@ export const GET: APIRoute = async ({ params, locals, request }) => {
   }
 
   const plantId = parsedParams.data.id;
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
   const requestId = request.headers.get("x-request-id") ?? undefined;
 
   try {
-    const diseases = await listDiseases(locals.supabase, DEFAULT_USER_ID, plantId);
+    const diseases = await listDiseases(locals.supabase, userId, plantId);
 
     return jsonResponse(200, {
       success: true,
@@ -147,6 +150,10 @@ export const POST: APIRoute = async ({ params, locals, request }) => {
   }
 
   const plantId = parsedParams.data.id;
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
   const requestId = request.headers.get("x-request-id") ?? undefined;
   let rawBody: unknown;
 
@@ -167,7 +174,7 @@ export const POST: APIRoute = async ({ params, locals, request }) => {
   const command: DiseaseCommand = parsedBody.data;
 
   try {
-    const disease = await createDisease(locals.supabase, DEFAULT_USER_ID, plantId, command);
+    const disease = await createDisease(locals.supabase, userId, plantId, command);
 
     return jsonResponse(201, {
       success: true,

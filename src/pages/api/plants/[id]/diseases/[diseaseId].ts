@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 
 import type { Json } from "../../../../../db/database.types.ts";
-import { DEFAULT_USER_ID } from "../../../../../db/supabase.client.ts";
 import { deleteDisease, ResourceNotFoundError, updateDisease } from "../../../../../lib/services/diseases.service.ts";
 import type { ApiResponseDto, DiseaseDto, DiseaseUpdateCommand } from "../../../../../types.ts";
 
@@ -118,6 +117,10 @@ export const PUT: APIRoute = async ({ params, locals, request }) => {
   }
 
   const plantId = parsedParams.data.id;
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
   const diseaseId = parsedParams.data.diseaseId;
   const requestId = request.headers.get("x-request-id") ?? undefined;
   let rawBody: unknown;
@@ -139,7 +142,7 @@ export const PUT: APIRoute = async ({ params, locals, request }) => {
   const command: DiseaseUpdateCommand = parsedBody.data;
 
   try {
-    const disease = await updateDisease(locals.supabase, DEFAULT_USER_ID, plantId, diseaseId, command);
+    const disease = await updateDisease(locals.supabase, userId, plantId, diseaseId, command);
 
     return jsonResponse(200, {
       success: true,
@@ -189,11 +192,15 @@ export const DELETE: APIRoute = async ({ params, locals, request }) => {
   }
 
   const plantId = parsedParams.data.id;
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
   const diseaseId = parsedParams.data.diseaseId;
   const requestId = request.headers.get("x-request-id") ?? undefined;
 
   try {
-    await deleteDisease(locals.supabase, DEFAULT_USER_ID, plantId, diseaseId);
+    await deleteDisease(locals.supabase, userId, plantId, diseaseId);
 
     return jsonResponse(200, {
       success: true,

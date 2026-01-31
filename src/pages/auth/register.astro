@@ -1,0 +1,33 @@
+---
+import AuthLayout from "@/layouts/AuthLayout.astro";
+import RegisterForm from "@/components/auth/RegisterForm";
+
+export const prerender = false;
+
+const sanitizeRedirectPath = (value: string | null) => {
+  if (!value) {
+    return undefined;
+  }
+
+  if (!value.startsWith("/") || value.startsWith("//")) {
+    return undefined;
+  }
+
+  if (value.includes("..") || value.includes("\\")) {
+    return undefined;
+  }
+
+  return value;
+};
+
+if (Astro.locals.user) {
+  return Astro.redirect("/app/dashboard");
+}
+
+const redirectTo = sanitizeRedirectPath(Astro.url.searchParams.get("redirectTo"));
+const initialEmail = Astro.url.searchParams.get("email") ?? undefined;
+---
+
+<AuthLayout title="Zaloz konto | Greenie">
+  <RegisterForm client:load redirectTo={redirectTo} initialEmail={initialEmail} />
+</AuthLayout>

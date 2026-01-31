@@ -2,9 +2,8 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 
 import type { Json } from "../../db/database.types.ts";
-import { DEFAULT_USER_ID } from "../../db/supabase.client.ts";
 import { getDashboard } from "../../lib/services/dashboard.service.ts";
-import type { ApiResponseDto, DashboardDto } from "../../types.ts";
+import type { ApiResponseDto } from "../../types.ts";
 
 export const prerender = false;
 
@@ -102,9 +101,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
     return errorResponse(400, "validation_error", "Invalid query parameters.", parsed.error.flatten() as Json);
   }
 
-  const userId = DEFAULT_USER_ID;
-  // TODO: Replace with Supabase Auth session user ID.
-
+  const userId = locals.user?.id;
   if (!userId) {
     return errorResponse(401, "unauthorized", "Authentication required.");
   }

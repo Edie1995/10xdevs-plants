@@ -35,6 +35,11 @@ export default function DashboardView({ initialUrl }: DashboardViewProps) {
 
     if (error.httpStatus === 400) {
       setQuery(DASHBOARD_QUERY_DEFAULTS, { replace: true });
+      const toastKey = "dashboard:query-reset";
+      if (lastToastRef.current !== toastKey) {
+        toast.info("Przywrocono domyslne filtry.");
+        lastToastRef.current = toastKey;
+      }
     }
   }, [error, setQuery]);
 
@@ -45,6 +50,12 @@ export default function DashboardView({ initialUrl }: DashboardViewProps) {
 
     const toastKey = `${error.code}:${error.httpStatus ?? ""}`;
     if (lastToastRef.current === toastKey) {
+      return;
+    }
+
+    if (error.code === "empty_response") {
+      toast.error("Brak danych z serwera. Sprobuj ponownie.");
+      lastToastRef.current = toastKey;
       return;
     }
 
@@ -88,10 +99,15 @@ export default function DashboardView({ initialUrl }: DashboardViewProps) {
 
       <DashboardStats stats={stats} isLoading={isLoading} />
 
-      {error && typeof error.httpStatus === "number" && error.httpStatus >= 500 ? (
+      {error &&
+      (error.code === "empty_response" || (typeof error.httpStatus === "number" && error.httpStatus >= 500)) ? (
         <section className="mt-10 rounded-xl border border-red-200 bg-red-50 p-6">
           <h2 className="text-base font-semibold text-red-800">Cos poszlo nie tak.</h2>
-          <p className="mt-2 text-sm text-red-700">Nie udalo sie pobrac danych. Sprobuj ponownie.</p>
+          <p className="mt-2 text-sm text-red-700">
+            {error.code === "empty_response"
+              ? "Brak danych z serwera. Sprobuj ponownie."
+              : "Nie udalo sie pobrac danych. Sprobuj ponownie."}
+          </p>
           <button
             type="button"
             className="mt-4 rounded-md bg-red-700 px-4 py-2 text-sm font-medium text-white"
@@ -125,7 +141,7 @@ export default function DashboardView({ initialUrl }: DashboardViewProps) {
           items={allPlants}
           pagination={pagination}
           query={query}
-        isLoading={isLoading}
+          isLoading={isLoading}
           onQueryChange={handleQueryChange}
           onCareActionCompleted={refetch}
           emptyState={

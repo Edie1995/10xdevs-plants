@@ -1,0 +1,34 @@
+---
+export const prerender = false;
+
+const sanitizeRedirectPath = (value: string | null) => {
+  if (!value) {
+    return undefined;
+  }
+
+  if (!value.startsWith("/") || value.startsWith("//")) {
+    return undefined;
+  }
+
+  if (value.includes("..") || value.includes("\\")) {
+    return undefined;
+  }
+
+  return value;
+};
+
+const code = Astro.url.searchParams.get("code");
+const next = sanitizeRedirectPath(Astro.url.searchParams.get("next")) ?? "/app/dashboard";
+
+if (!code) {
+  return Astro.redirect("/auth/login?toast=auth-callback-failed");
+}
+
+const { error } = await Astro.locals.supabase.auth.exchangeCodeForSession(code);
+
+if (error) {
+  return Astro.redirect("/auth/login?toast=auth-callback-failed");
+}
+
+return Astro.redirect(next);
+---

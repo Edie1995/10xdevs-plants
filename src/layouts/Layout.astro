@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { Toaster } from "@/components/ui/sonner";
+import AuthToastListener from "@/components/auth/AuthToastListener";
 import logo from "../../Gemini_Generated_Image_t3nziqt3nziqt3nz.png";
 
 interface Props {
@@ -26,10 +27,25 @@ const { title = "10x Astro Starter" } = Astro.props;
           <img src={logo.src} alt="Greenie logo" class="h-10 w-10 rounded-full" loading="lazy" />
           <span class="text-lg font-semibold">Greenie</span>
         </a>
+        <nav class="ml-auto flex items-center gap-2 text-sm" aria-label="Konto">
+          <a
+            href="/auth/login"
+            class="rounded-full border border-transparent px-4 py-2 font-medium text-neutral-700 transition hover:border-neutral-200 hover:bg-neutral-100 hover:text-neutral-900"
+          >
+            Zaloguj sie
+          </a>
+          <a
+            href="/auth/register"
+            class="rounded-full border border-neutral-900 bg-neutral-900 px-4 py-2 font-medium text-white shadow-sm transition hover:bg-neutral-800"
+          >
+            Zaloz konto
+          </a>
+        </nav>
       </div>
     </header>
     <slot />
-    <Toaster client:load richColors />
+    <AuthToastListener client:load />
+    <Toaster client:load richColors position="top-center" duration={5000} />
   </body>
 </html>
 

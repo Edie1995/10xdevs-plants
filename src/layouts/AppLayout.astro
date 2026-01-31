@@ -1,0 +1,79 @@
+---
+import "../styles/global.css";
+import { Toaster } from "@/components/ui/sonner";
+import AppTopNav from "@/components/app/AppTopNav.astro";
+import AppBottomNav from "@/components/app/AppBottomNav.astro";
+import AppFooter from "@/components/app/AppFooter.astro";
+import LogoutButton from "@/components/auth/LogoutButton";
+import { appNavItems } from "@/lib/navigation/app-nav";
+import logo from "../../Gemini_Generated_Image_t3nziqt3nziqt3nz.png";
+
+interface Props {
+  title?: string;
+  activeRoute?: "dashboard" | "plants";
+}
+
+const { title = "Greenie", activeRoute } = Astro.props;
+const activePathname = Astro.url.pathname;
+const resolvedTitle = title ? `${title} | Greenie` : "Greenie";
+const resolvedItems = appNavItems;
+const activeLabel =
+  activeRoute === "dashboard"
+    ? "Dashboard"
+    : activeRoute === "plants"
+      ? "Rosliny"
+      : (resolvedItems.find((item) => activePathname.startsWith(item.href))?.label ?? title);
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{resolvedTitle}</title>
+  </head>
+  <body class="bg-neutral-50 text-neutral-900">
+    <header class="sticky top-0 z-30 border-b border-neutral-200 bg-white/95 backdrop-blur">
+      <div class="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-6 py-4">
+        <div class="flex items-center gap-3">
+          <a href="/app/dashboard" class="flex items-center gap-3 text-neutral-900">
+            <img src={logo.src} alt="Greenie logo" class="h-10 w-10 rounded-full" loading="lazy" />
+            <span class="text-lg font-semibold">Greenie</span>
+          </a>
+          {activeLabel ? <span class="hidden text-sm text-neutral-500 md:inline">/ {activeLabel}</span> : null}
+        </div>
+        <div class="flex items-center gap-3">
+          <AppTopNav items={resolvedItems} activePathname={activePathname} />
+          {
+            Astro.locals.user ? (
+              <LogoutButton client:load />
+            ) : (
+              <a href="/auth/login" class="text-sm font-medium text-neutral-700 underline-offset-4 hover:underline">
+                Zaloguj sie
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <main class="min-h-[calc(100vh-72px)] pb-24 md:pb-6">
+      <slot />
+    </main>
+
+    <AppBottomNav items={resolvedItems} activePathname={activePathname} />
+    <AppFooter />
+    <Toaster client:load richColors position="top-center" duration={5000} />
+  </body>
+</html>
+
+<style>
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>

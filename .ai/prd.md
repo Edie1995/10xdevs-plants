@@ -14,9 +14,8 @@ Greenie rozwiązuje ten problem poprzez prywatny, uporządkowany rejestr roślin
 1. Uwierzytelnianie i dostęp
    1.1. Rejestracja konta przez e-mail i hasło.
    1.2. Logowanie przez e-mail i hasło.
-   1.3. Logowanie przez Google.
    1.4. Odzyskiwanie hasła.
-   1.5. Edycja profilu: zmiana hasła i nicku.
+   1.5. Zmiana hasła.
    1.6. Dostęp do aplikacji wyłącznie po zalogowaniu; niezalogowani widzą landing page.
 
 2. Karty roślin (CRUD)
@@ -71,7 +70,7 @@ Greenie rozwiązuje ten problem poprzez prywatny, uporządkowany rejestr roślin
    Kryteria akceptacji:
    - Formularz rejestracji wymaga e-maila i hasła.
    - System waliduje poprawność e-maila i minimalne wymagania hasła.
-   - Po poprawnej rejestracji użytkownik jest zalogowany.
+   - Po poprawnej rejestracji użytkownik musi potwierdzić email zeby się zalogować.
    - W przypadku błędu użytkownik widzi komunikat toast.
 
 2. US-002
@@ -82,14 +81,6 @@ Greenie rozwiązuje ten problem poprzez prywatny, uporządkowany rejestr roślin
    - Po poprawnym logowaniu widzi dashboard.
    - Błędne dane skutkują komunikatem toast.
 
-3. US-003
-   Tytuł: Logowanie przez Google
-   Opis: Jako użytkownik chcę zalogować się przez Google, aby szybko uzyskać dostęp.
-   Kryteria akceptacji:
-   - Widoczny jest przycisk logowania Google.
-   - Po poprawnym logowaniu użytkownik trafia do dashboardu.
-   - Błąd logowania prezentowany jest w toście.
-
 4. US-004
    Tytuł: Odzyskiwanie hasła
    Opis: Jako użytkownik, który zapomniał hasła, chcę je odzyskać, aby wrócić do aplikacji.
@@ -99,10 +90,10 @@ Greenie rozwiązuje ten problem poprzez prywatny, uporządkowany rejestr roślin
    - Dla błędnego e-maila wyświetla się komunikat toast.
 
 5. US-005
-   Tytuł: Zmiana hasła i nicku
+   Tytuł: Zmiana hasła
    Opis: Jako użytkownik chcę edytować profil, aby zaktualizować dane.
    Kryteria akceptacji:
-   - Użytkownik może zmienić nick i hasło.
+   - Użytkownik może zmienić hasło.
    - Zmiana wymaga podania aktualnego hasła.
    - Po zapisie pojawia się toast sukcesu.
 
@@ -344,6 +335,19 @@ Greenie rozwiązuje ten problem poprzez prywatny, uporządkowany rejestr roślin
    Kryteria akceptacji:
    - Użytkownik widzi tylko własne karty roślin.
    - Próba dostępu do nie swojej karty jest blokowana.
+
+37. US-037: Bezpieczny dostęp i uwierzytelnianie
+- Tytuł: Bezpieczny dostęp
+- Opis: Jako użytkownik chcę mieć możliwość rejestracji i logowania się do systemu w sposób zapewniający bezpieczeństwo moich danych.
+- Kryteria akceptacji:
+  - Logowanie i rejestracja odbywają się na dedykowanych stronach.
+  - Logowanie wymaga podania adresu email i hasła.
+  - Rejestracja wymaga podania adresu email, hasła i potwierdzenia hasła.
+  - Użytkownik NIE MOŻE korzystać z seriwsu Kolekcji roslin i dashboardu bez logowania się do systemu (US-036).
+  - Użytkownik może logować się do systemu poprzez przycisk w prawym górnym rogu.
+  - Użytkownik może się wylogować z systemu poprzez przycisk w prawym górnym rogu w głównym @AppLayout.astro.
+  - Nie korzystamy z zewnętrznych serwisów logowania (np. Google, GitHub).
+  - Odzyskiwanie hasła powinno być możliwe.
 
 ## 6. Metryki sukcesu
 1. Wskaźnik aktywacji: odsetek użytkowników, którzy dodali minimum 1 roślinę w ciągu 24 godzin od rejestracji.

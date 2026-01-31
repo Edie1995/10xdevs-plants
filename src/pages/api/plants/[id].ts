@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 
 import type { Json } from "../../../db/database.types.ts";
-import { DEFAULT_USER_ID } from "../../../db/supabase.client.ts";
 import {
   deletePlantCard,
   getPlantDetail,
@@ -136,10 +135,14 @@ export const GET: APIRoute = async ({ params, locals, request }) => {
   }
 
   const { id: plantId } = parsedParams.data;
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
   const requestId = request.headers.get("x-request-id") ?? undefined;
 
   try {
-    const plantCard = await getPlantDetail(locals.supabase, plantId, { recentCareLogsLimit: 5 });
+    const plantCard = await getPlantDetail(locals.supabase, userId, plantId, { recentCareLogsLimit: 5 });
     return jsonResponse(200, {
       success: true,
       data: plantCard,
@@ -202,8 +205,13 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     return errorResponse(409, "duplicate_season", "Schedule seasons must be unique.");
   }
 
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
+
   try {
-    const plantCard = await updatePlantCard(locals.supabase, DEFAULT_USER_ID, parsedParams.data.id, payload);
+    const plantCard = await updatePlantCard(locals.supabase, userId, parsedParams.data.id, payload);
     return jsonResponse(200, {
       success: true,
       data: plantCard,
@@ -229,10 +237,14 @@ export const DELETE: APIRoute = async ({ params, locals, request }) => {
   }
 
   const { id: plantId } = parsedParams.data;
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
   const requestId = request.headers.get("x-request-id") ?? undefined;
 
   try {
-    await deletePlantCard(locals.supabase, DEFAULT_USER_ID, plantId);
+    await deletePlantCard(locals.supabase, userId, plantId);
     return jsonResponse(200, {
       success: true,
       data: null,

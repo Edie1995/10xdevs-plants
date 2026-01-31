@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 
 import type { Json } from "../../../../db/database.types.ts";
-import { DEFAULT_USER_ID } from "../../../../db/supabase.client.ts";
 import {
   getPlantSchedules,
   ResourceNotFoundError,
@@ -118,8 +117,7 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
     return errorResponse(400, "validation_error", "Invalid path parameters.", parsedParams.error.flatten() as Json);
   }
 
-  const userId = DEFAULT_USER_ID;
-  // TODO: Replace with authenticated user from Supabase session.
+  const userId = locals.user?.id;
   if (!userId) {
     return errorResponse(401, "unauthorized", "Authentication required.");
   }
@@ -208,8 +206,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     });
   }
 
-  const userId = DEFAULT_USER_ID;
-  // TODO: Replace with authenticated user from Supabase session.
+  const userId = locals.user?.id;
   if (!userId) {
     return errorResponse(401, "unauthorized", "Authentication required.");
   }

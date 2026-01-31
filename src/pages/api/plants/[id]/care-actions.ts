@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 
 import type { Json } from "../../../../db/database.types.ts";
-import { DEFAULT_USER_ID } from "../../../../db/supabase.client.ts";
 import {
   createCareAction,
   DomainValidationError,
@@ -117,8 +116,13 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
     return errorResponse(400, "validation_error", "Invalid query parameters.", parsedQuery.error.flatten() as Json);
   }
 
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
+
   try {
-    const data = await listCareActions(locals.supabase, DEFAULT_USER_ID, parsedParams.data.id, parsedQuery.data);
+    const data = await listCareActions(locals.supabase, userId, parsedParams.data.id, parsedQuery.data);
     return jsonResponse(200, {
       success: true,
       data,
@@ -180,8 +184,13 @@ export const POST: APIRoute = async ({ params, locals, request }) => {
     }
   }
 
+  const userId = locals.user?.id;
+  if (!userId) {
+    return errorResponse(401, "unauthorized", "Authentication required.");
+  }
+
   try {
-    const data = await createCareAction(locals.supabase, DEFAULT_USER_ID, parsedParams.data.id, parsedBody.data);
+    const data = await createCareAction(locals.supabase, userId, parsedParams.data.id, parsedBody.data);
     return jsonResponse(201, {
       success: true,
       data,

@@ -1,10 +1,10 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+import AppLayout from "@/layouts/AppLayout.astro";
 import DashboardView from "@/components/dashboard/DashboardView";
 
 const initialUrl = Astro.url.toString();
 ---
 
-<Layout title="Dashboard">
+<AppLayout title="Dashboard" activeRoute="dashboard">
   <DashboardView client:load initialUrl={initialUrl} />
-</Layout>
+</AppLayout>

@@ -93,11 +93,11 @@ export default function PlantHeader({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-start gap-4">
           <div
-            className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 text-base font-semibold text-neutral-900"
+            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 text-xl font-semibold text-neutral-900"
             style={{ backgroundColor: plant.colorHex ?? "#f5f5f5" }}
             aria-hidden="true"
           >
-            {iconSrc ? <img src={iconSrc} alt="" className="h-8 w-8" /> : iconLabel}
+            {iconSrc ? <img src={iconSrc} alt="" className="h-12 w-12" /> : iconLabel}
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-3">
