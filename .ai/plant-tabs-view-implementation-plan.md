@@ -215,7 +215,7 @@ export interface PlantScheduleTabProps {
 **Zachowanie po zapisie:**
 - Po udanym `PUT /schedules`:
   - zaktualizować cache (`setScheduleState({status:"ready", schedules: response, lastCheckedAt: now})`)
-  - wywołać `onSaved()` (czyli `refetch()`), bo backend może przeliczyć `next_*_at` i `status_priority`
+  - wywołać `onSaved()` (czyli `refetch()`), bo backend może przeliczyć `next_*_at` i wynikowy status
   - pokazać inline sukces / toast (wg miejsca)
 - Jeśli serwer zwróci `schedule_incomplete` (500 z GET) lub `schedule_missing` / `duplicate_season` / 400:
   - przełożyć na stan UI (banner ostrzegawczy + możliwość przejścia w edycję i uzupełnienia 4 sezonów)

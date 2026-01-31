@@ -13,7 +13,7 @@ export interface PlantsListQueryState {
 export const PLANTS_LIST_QUERY_DEFAULTS: PlantsListQueryState = {
   page: 1,
   limit: 20,
-  sort: "priority",
+  sort: "name",
   direction: "asc",
 };
 

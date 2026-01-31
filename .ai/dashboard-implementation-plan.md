@@ -9,7 +9,7 @@ Endpoint `GET /api/dashboard` dostarcza **pojedynczy payload** do widoku startow
 - Obsługuje wyszukiwanie (`search`) ograniczone do roślin użytkownika.
 - Zwraca **paginowaną** listę `all_plants` (max 20 / strona).
 - Zwraca listę `requires_attention` (rośliny z najbliższą datą care \(watering/fertilizing\) **≤ dziś**).
-- Wylicza `stats` na podstawie `status_priority` (0 = urgent, 1 = warning, 2 = ok).
+- Wylicza `stats` na podstawie priorytetu wyliczanego z najbliższej daty `next_*_at` (0 = urgent, 1 = warning, 2 = ok).
 
 ## 2. Szczegóły żądania
 
@@ -79,7 +79,6 @@ Przykład:
         "icon_key": "monstera",
         "color_hex": "#2D5A27",
         "difficulty": "medium",
-        "status_priority": 1,
         "next_watering_at": "2026-01-29T10:00:00Z",
         "next_fertilizing_at": "2026-02-15T10:00:00Z",
         "last_watered_at": "2026-01-21T10:00:00Z",
@@ -95,7 +94,6 @@ Przykład:
         "icon_key": "monstera",
         "color_hex": "#2D5A27",
         "difficulty": "medium",
-        "status_priority": 1,
         "next_watering_at": "2026-01-29T10:00:00Z",
         "next_fertilizing_at": "2026-02-15T10:00:00Z",
         "last_watered_at": "2026-01-21T10:00:00Z",
@@ -236,12 +234,12 @@ Wszystkie zapytania powinny wybierać tylko kolumny wymagane przez `PlantCardLis
 
 ### Indeksy (rekomendacje)
 - `plant_card(user_id)`
-- `plant_card(user_id, status_priority, name)` (dashboard sort domyślny)
+- `plant_card(user_id, next_care_at, name)` (dashboard sort domyślny)
 - `plant_card(user_id, name)` (sort + search)
 - `plant_card(user_id, next_watering_at)` i `plant_card(user_id, next_fertilizing_at)` (requires_attention)
 
 ### Spójność logiki „≤ dziś”
-`status_priority` jest liczone po dacie (UTC date-only). Żeby `requires_attention` uwzględniało także rekordy „na dziś” niezależnie od godziny, porównanie powinno być wykonywane względem **końca dnia UTC** (np. `23:59:59.999Z`) albo na poziomie bazy przez porównanie po `::date`.
+Priorytet jest liczony po dacie (UTC date-only) na podstawie wcześniejszej z `next_watering_at`/`next_fertilizing_at`. Żeby `requires_attention` uwzględniało także rekordy „na dziś” niezależnie od godziny, porównanie powinno być wykonywane względem **końca dnia UTC** (np. `23:59:59.999Z`) albo na poziomie bazy przez porównanie po `::date`.
 
 ## 8. Kroki implementacji
 
@@ -263,12 +261,12 @@ Wszystkie zapytania powinny wybierać tylko kolumny wymagane przez `PlantCardLis
      - Zrealizować `all_plants` z `count: "exact"` oraz `range()`
      - Zrealizować `requires_attention`:
        - warunek: `next_watering_at <= todayEndUtc OR next_fertilizing_at <= todayEndUtc`
-       - sort: zawsze `status_priority asc`, potem `name asc`
+      - sort: zawsze priorytet ASC (wyliczany z `next_*_at`), potem `name asc`
        - limit: stały `20` (rekomendacja) lub `min(20, limit)` dla spójności UX
      - Zrealizować `stats`:
        - `total_plants` = `count` z zapytania `all_plants`
-       - `urgent` = count gdzie `status_priority = 0` na wspólnych filtrach
-       - `warning` = count gdzie `status_priority = 1` na wspólnych filtrach
+      - `urgent` = count gdzie priorytet = 0 na wspólnych filtrach
+      - `warning` = count gdzie priorytet = 1 na wspólnych filtrach
      - Zwrócić `DashboardDto` + `PaginationDto`.
 
 4. **Autoryzacja**

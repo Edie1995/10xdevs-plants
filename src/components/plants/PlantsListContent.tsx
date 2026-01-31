@@ -32,9 +32,9 @@ const buildSkeletons = (count: number) =>
   ));
 
 const buildSections = (items: PlantCardVM[]) => {
-  const urgent = items.filter((item) => item.statusPriority >= 2);
+  const urgent = items.filter((item) => item.statusPriority === 0);
   const today = items.filter((item) => item.statusPriority === 1);
-  const ok = items.filter((item) => item.statusPriority === 0);
+  const ok = items.filter((item) => item.statusPriority === 2);
 
   return [
     { id: "urgent", title: "Pilne", items: urgent },
@@ -70,9 +70,7 @@ export default function PlantsListContent({
         {sections.map((section, index) => (
           <section key={section.id} className={index === 0 ? "" : "pt-2"}>
             <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-600">
-                {section.title}
-              </h2>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-600">{section.title}</h2>
               <span className="text-xs text-neutral-500">{section.items.length} roslin</span>
             </div>
             <div className="mt-5 grid gap-4 md:grid-cols-2">

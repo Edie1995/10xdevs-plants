@@ -29,7 +29,7 @@ This table is managed by Supabase Auth
 - `notes` varchar(2000), NULL
 - `icon_key` varchar(50), NULL
 - `color_hex` varchar(7), NULL, CHECK (`color_hex` ~ '^#[0-9A-Fa-f]{6}$')
-- `status_priority` smallint, NOT NULL, DEFAULT 2, CHECK (`status_priority` >= 0 AND `status_priority` <= 2)
+- `next_care_at` timestamptz GENERATED ALWAYS AS earliest of `next_watering_at`/`next_fertilizing_at`
 - `last_watered_at` timestamptz, NULL
 - `last_fertilized_at` timestamptz, NULL
 - `next_watering_at` timestamptz, NULL
@@ -73,7 +73,7 @@ This table is managed by Supabase Auth
 
 3. Indeksy
 - `plant_card`: INDEX on (`user_id`)
-- `plant_card`: INDEX on (`status_priority`, `name`)
+- `plant_card`: INDEX on (`next_care_at`, `name`)
 - `plant_card`: INDEX on (`name`)
 - `plant_card`: INDEX on (`next_watering_at`)
 - `plant_card`: INDEX on (`next_fertilizing_at`)

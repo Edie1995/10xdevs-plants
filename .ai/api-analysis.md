@@ -32,11 +32,11 @@
   - `notes` (varchar(2000), NULL)
   - `icon_key` (varchar(50), NULL)
   - `color_hex` (varchar(7), NULL, CHECK: `^#[0-9A-Fa-f]{6}$`)
-  - `status_priority` (smallint, NOT NULL, DEFAULT 2, CHECK: 0-2)
   - `last_watered_at` (timestamptz, NULL)
   - `last_fertilized_at` (timestamptz, NULL)
   - `next_watering_at` (timestamptz, NULL)
   - `next_fertilizing_at` (timestamptz, NULL)
+  - `next_care_at` (timestamptz, GENERATED: earliest of `next_watering_at`/`next_fertilizing_at`)
   - `created_at` (timestamptz, NOT NULL, DEFAULT now())
   - `updated_at` (timestamptz, NOT NULL, DEFAULT now())
 - **Relationships:**
@@ -46,7 +46,7 @@
   - 1:N with `care_log` (via `plant_card_id`)
 - **Indexes:**
   - `idx_plant_card_user_id` on (`user_id`)
-  - `idx_plant_card_status_priority_name` on (`status_priority`, `name`)
+  - `idx_plant_card_next_care_at_name` on (`next_care_at`, `name`)
   - `idx_plant_card_name` on (`name`)
   - `idx_plant_card_next_watering_at` on (`next_watering_at`)
   - `idx_plant_card_next_fertilizing_at` on (`next_fertilizing_at`)
@@ -296,7 +296,7 @@ Body: { season, watering_interval, fertilizing_interval }
 #### Feature: Get Plant List (US-018, US-019, US-021, US-022)
 **Candidate A: Single Endpoint with Query Parameters**
 ```
-GET /api/plants?page=1&limit=20&search=monstera&status_priority=?
+GET /api/plants?page=1&limit=20&search=monstera&needs_attention=?
 Response: {
   plants: PlantCard[],
   pagination: { page: number, limit: number, total: number, totalPages: number }
@@ -314,7 +314,7 @@ GET /api/plants?page=1&limit=20&search=monstera
 - PRD Section 3.4 (lines 44-45) specifies two distinct sections: "Requires Attention" and "All My Plants"
 - US-031 requires "Requires Attention" section as separate view
 - Search (US-021) applies to "All My Plants" section only, not "Requires Attention"
-- Database index `idx_plant_card_status_priority_name` supports filtering by `status_priority` (`.ai/db-plan.md` line 76)
+- Database index `idx_plant_card_next_care_at_name` supports sorting by najbliższy termin opieki (`.ai/db-plan.md` line 76)
 - Separate endpoints allow independent loading and better UX
 - Pagination applies to "All My Plants" only (US-022: max 20 items)
 
@@ -482,7 +482,7 @@ GET /api/plants?page=1&limit=20
 - US-031 requires "Requires Attention" section as separate view
 - Frontend may load sections independently (lazy loading)
 - Search (US-021) applies to "All Plants" section, not "Requires Attention"
-- Database index `idx_plant_card_status_priority_name` supports filtering by `status_priority` (`.ai/db-plan.md` line 76)
+- Database index `idx_plant_card_next_care_at_name` wspiera sortowanie po najbliższym terminie opieki (`.ai/db-plan.md` line 76)
 - More flexible for future dashboard enhancements
 
 ---
@@ -518,7 +518,7 @@ GET /api/plants?page=1&limit=20
   - `name`: max 50 characters (PRD line 25, schema line 31)
   - Text fields: max 2000 characters (PRD line 30, schema lines 36-39)
   - `color_hex`: regex `^#[0-9A-Fa-f]{6}$` (schema line 41)
-  - `status_priority`: 0-2 range (schema line 42)
+  - `next_care_at`: wyliczane z `next_*_at` (schema line 42)
   - `watering_interval`, `fertilizing_interval`: 0-365 days (schema lines 80-81)
   - `performed_at`: cannot be future date (schema line 103)
 
@@ -534,7 +534,7 @@ GET /api/plants?page=1&limit=20
 **Source:** `.ai/db-plan.md` Section 3 (lines 74-83), `supabase/migrations/20260126140000_create_plant_schema.sql` (lines 110-139)
 
 - **User Plant Lookup:** `idx_plant_card_user_id` for fetching user's plants
-- **Dashboard Sorting:** `idx_plant_card_status_priority_name` for priority + alphabetical sort
+- **Dashboard Sorting:** `idx_plant_card_next_care_at_name` for earliest-care + alphabetical sort
 - **Search:** `idx_plant_card_name` for text search by name
 - **Due Date Queries:** 
   - `idx_plant_card_next_watering_at` for finding plants due for watering
@@ -566,18 +566,18 @@ GET /api/plants?page=1&limit=20
 
 ## 5. PRD Logic Mapping to API Endpoints
 
-### 5.1 Status Priority Logic
+### 5.1 Priorytet opieki (wyliczany)
 **Source:** `.ai/prd.md` Section 3.4 (lines 46, 222-224), US-020, US-031
 
 **Logic:**
-- `status_priority = 0`: Urgent (overdue, red indicator)
-- `status_priority = 1`: Warning (due today, orange indicator)
-- `status_priority = 2`: OK (future dates, no special indicator)
+- `priority = 0`: Urgent (overdue, red indicator)
+- `priority = 1`: Warning (due today, orange indicator)
+- `priority = 2`: OK (future dates, no special indicator)
 
 **Calculation:**
 - Compare `next_watering_at` and `next_fertilizing_at` with current date
-- Set `status_priority` based on earliest due date
-- Update `status_priority` when care actions are logged
+- Set priority based on earliest due date (or OK when both missing)
+- Update priority when care actions are logged
 
 **API Endpoint:** 
 - Calculated server-side when fetching plant list
@@ -602,27 +602,27 @@ GET /api/plants?search=monstera&page=1&limit=20
 **Source:** `.ai/prd.md` Section 3.4 (lines 44-45), US-031
 
 **"Requires Attention" Section:**
-- Plants with `status_priority = 0` OR `status_priority = 1`
-- Sorted by `status_priority` ASC, then `name` ASC
+- Plants with earliest `next_*_at` ≤ today (end of day UTC)
+- Sorted by priority ASC (derived from `next_*_at`), then `name` ASC
 - No pagination (typically small set)
 
 **API Endpoint:**
 ```
 GET /api/plants/requires-attention
-Query: status_priority IN (0, 1)
-Order: status_priority ASC, name ASC
+Query: earliest `next_*_at` ≤ today
+Order: priority ASC, name ASC
 ```
 
 **"All My Plants" Section:**
 - All user's plants
-- Sorted by `status_priority` ASC, then `name` ASC
+- Sorted by priority ASC, then `name` ASC
 - Paginated (max 20 per page)
 - Supports search filter
 
 **API Endpoint:**
 ```
 GET /api/plants?page=1&limit=20&search=?
-Order: status_priority ASC, name ASC
+Order: priority ASC, name ASC
 ```
 
 ### 5.4 Care Schedule Calculation Logic
@@ -674,7 +674,7 @@ Order: status_priority ASC, name ASC
 | `notes` | string | No | 2000 | - |
 | `icon_key` | string | No | 50 | - |
 | `color_hex` | string | No | 7 | Regex: `^#[0-9A-Fa-f]{6}$` |
-| `status_priority` | number | Yes (default: 2) | - | Integer 0-2 |
+| `next_care_at` | timestamptz | No | - | Generated from earliest `next_*_at` |
 
 ### 6.2 Disease Entry Validation
 **Source:** `.ai/db-plan.md` (lines 40-47), `.ai/prd.md` Section 3.2 (line 31)

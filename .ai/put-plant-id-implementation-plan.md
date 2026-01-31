@@ -1,7 +1,7 @@
 ## API Endpoint Implementation Plan: `PUT /api/plants/:id`
 
 ## 1. Przegląd punktu końcowego
-Endpoint aktualizuje istniejącą kartę rośliny (`plant_card`) należącą do zalogowanego użytkownika. Pozwala na częściowe aktualizacje pól oraz opcjonalną aktualizację zagnieżdżonych relacji (`seasonal_schedule`, `disease_entry`). Jeśli w wyniku zmian mają się zmienić terminy opieki, endpoint musi ponownie wyliczyć `status_priority`.
+Endpoint aktualizuje istniejącą kartę rośliny (`plant_card`) należącą do zalogowanego użytkownika. Pozwala na częściowe aktualizacje pól oraz opcjonalną aktualizację zagnieżdżonych relacji (`seasonal_schedule`, `disease_entry`). Jeśli w wyniku zmian mają się zmienić terminy opieki, endpoint musi ponownie wyliczyć priorytet na podstawie `next_*_at`.
 
 ## 2. Szczegóły żądania
 - Metoda HTTP: `PUT`
@@ -70,7 +70,6 @@ Przykład (sukces):
     "notes": null,
     "icon_key": "leaf",
     "color_hex": "#22c55e",
-    "status_priority": 2,
     "last_watered_at": null,
     "last_fertilized_at": null,
     "next_watering_at": null,
@@ -103,7 +102,7 @@ Przykład (sukces):
      - następnie (jeśli `last_*_at` istnieją) przelicz `next_*_at` na podstawie zaktualizowanych intervali (dla sezonu daty `last_*_at`),
    - jeśli `diseases` w payload:
      - strategia w tym planie: **replace** – usuń istniejące, wstaw nowe,
-   - jeśli w wyniku powyższego zmienią się `next_watering_at` i/lub `next_fertilizing_at`, przelicz `status_priority`.
+   - jeśli w wyniku powyższego zmienią się `next_watering_at` i/lub `next_fertilizing_at`, przelicz priorytet.
 6. Service pobiera i zwraca pełny rekord z relacjami:
    - `select("*, seasonal_schedule(*), disease_entry(*), care_log(*)")` + mapowanie do `PlantCardDetailDto` (jak w `createPlantCard`).
 7. Route zwraca `200` z envelope.
@@ -111,7 +110,7 @@ Przykład (sukces):
 ### Reguły obliczeń terminów i priorytetu
 - `next_watering_at`: jeżeli `last_watered_at` != null i istnieje `watering_interval` dla sezonu `last_watered_at` → `last_watered_at + intervalDays`
 - `next_fertilizing_at`: analogicznie dla fertilizing; jeśli `fertilizing_interval = 0` → `next_fertilizing_at = null`
-- `status_priority`:
+- Priorytet (wyliczony z wcześniejszej z `next_*_at`):
   - wyznacz najbliższy termin: `min(next_watering_at, next_fertilizing_at)` z pominięciem nulli
   - jeśli brak terminów → `2` (future/neutral)
   - jeśli najbliższy termin < teraz → `0` (overdue)
@@ -177,10 +176,10 @@ Wskazówki implementacyjne:
    - `diseases` obecne → replace (delete + insert)
 4. Dodać przeliczanie terminów:
    - po aktualizacji schedules, na podstawie `last_*_at` z DB i nowego intervala dla sezonu tej daty
-   - aktualizacja `next_*_at` i wynikowego `status_priority` (jeżeli terminy się zmieniły)
+   - aktualizacja `next_*_at` i wynikowego priorytetu (jeżeli terminy się zmieniły)
 5. Testy (min. zestaw):
    - `200` – aktualizacja pojedynczego pola (np. `name`)
-   - `200` – update schedules + rekalkulacja `next_*` i `status_priority`
+   - `200` – update schedules + rekalkulacja `next_*` i priorytetu
    - `400` – błędny JSON / błędny `color_hex` / `name` jako pusty string
    - `404` – nieistniejący `id` lub brak własności
    - `401` – brak sesji (po wdrożeniu auth)

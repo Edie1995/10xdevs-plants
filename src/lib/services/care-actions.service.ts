@@ -11,7 +11,6 @@ import type {
 } from "../../types.ts";
 import {
   addDaysUtc,
-  computeStatusPriority,
   formatUtcDateOnly,
   getSeasonForDate,
   parseDateOnlyToUtc,
@@ -98,7 +97,7 @@ export const createCareAction = async (
   const { data: currentPlant, error: plantError } = await supabase
     .from("plant_card")
     .select(
-      "id, name, icon_key, color_hex, difficulty, status_priority, next_watering_at, next_fertilizing_at, last_watered_at, last_fertilized_at, created_at, updated_at"
+      "id, name, icon_key, color_hex, difficulty, next_watering_at, next_fertilizing_at, last_watered_at, last_fertilized_at, created_at, updated_at"
     )
     .eq("id", plantId)
     .eq("user_id", userId)
@@ -161,13 +160,7 @@ export const createCareAction = async (
     throw new Error("Failed to create care log.");
   }
 
-  const nextWateringAt = command.action_type === "watering" ? nextDate : currentPlant.next_watering_at;
-  const nextFertilizingAt = command.action_type === "fertilizing" ? nextDate : currentPlant.next_fertilizing_at;
-  const statusPriority = computeStatusPriority(nextWateringAt, nextFertilizingAt);
-
-  const updatePayload: Partial<PlantCardRow> = {
-    status_priority: statusPriority,
-  };
+  const updatePayload: Partial<PlantCardRow> = {};
 
   if (command.action_type === "watering") {
     updatePayload.last_watered_at = performedAtIso;
@@ -183,7 +176,7 @@ export const createCareAction = async (
     .eq("id", plantId)
     .eq("user_id", userId)
     .select(
-      "id, name, icon_key, color_hex, difficulty, status_priority, next_watering_at, next_fertilizing_at, last_watered_at, last_fertilized_at, created_at, updated_at"
+      "id, name, icon_key, color_hex, difficulty, next_watering_at, next_fertilizing_at, last_watered_at, last_fertilized_at, created_at, updated_at"
     )
     .single();
 

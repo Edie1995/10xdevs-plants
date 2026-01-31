@@ -173,9 +173,11 @@ export default function PlantCard({
             </div>
             <div>
               <CardTitle className="text-lg">{plant.name}</CardTitle>
-              <div className="mt-2">
-                <Badge className={statusToneClasses[plant.statusTone]}>{plant.statusLabel}</Badge>
-              </div>
+              {plant.statusPriority !== 2 ? (
+                <div className="mt-2">
+                  <Badge className={statusToneClasses[plant.statusTone]}>{plant.statusLabel}</Badge>
+                </div>
+              ) : null}
             </div>
           </div>
           <div className="flex items-start gap-2">

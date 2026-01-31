@@ -116,7 +116,6 @@ Example success response:
         "icon_key": "monstera",
         "color_hex": "#2D5A27",
         "difficulty": "medium",
-        "status_priority": 1,
         "next_watering_at": "2026-01-29T10:00:00Z",
         "next_fertilizing_at": "2026-02-15T10:00:00Z",
         "last_watered_at": "2026-01-21T10:00:00Z",
@@ -132,7 +131,6 @@ Example success response:
         "icon_key": "monstera",
         "color_hex": "#2D5A27",
         "difficulty": "medium",
-        "status_priority": 1,
         "next_watering_at": "2026-01-29T10:00:00Z",
         "next_fertilizing_at": "2026-02-15T10:00:00Z",
         "last_watered_at": "2026-01-21T10:00:00Z",
@@ -226,7 +224,6 @@ Example success response:
     "recent_care_logs": [],
     "created_at": "2026-01-28T12:00:00.000Z",
     "updated_at": "2026-01-28T12:00:00.000Z",
-    "status_priority": 0,
     "icon_key": null,
     "notes": null,
     "position": null,
@@ -286,7 +283,7 @@ Responses:
 
 Manual test checklist:
 - Updating a single field returns `200`
-- Updating schedules recalculates `next_*` and `status_priority`
+- Updating schedules recalculates `next_*` and derived priority
 - Invalid JSON body returns `400`
 - Empty `name` returns `400`
 - Invalid `color_hex` returns `400`
@@ -464,7 +461,6 @@ Example success response:
     ],
     "created_at": "2026-01-28T12:00:00.000Z",
     "updated_at": "2026-01-28T12:00:00.000Z",
-    "status_priority": 0,
     "icon_key": null,
     "notes": null,
     "position": null,
@@ -815,7 +811,6 @@ Example success response:
       "icon_key": "monstera",
       "color_hex": "#22c55e",
       "difficulty": "easy",
-      "status_priority": 2,
       "next_watering_at": "2026-02-02T00:00:00.000Z",
       "next_fertilizing_at": null,
       "last_watered_at": "2026-01-28T00:00:00.000Z",

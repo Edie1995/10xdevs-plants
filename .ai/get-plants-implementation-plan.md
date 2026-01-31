@@ -57,7 +57,6 @@ export type PlantCardListItemDto = Pick<
   | "icon_key"
   | "color_hex"
   | "difficulty"
-  | "status_priority"
   | "next_watering_at"
   | "next_fertilizing_at"
   | "last_watered_at"
@@ -106,7 +105,6 @@ export interface PlantCardListResult {
       "icon_key": "monstera",
       "color_hex": "#2D5A27",
       "difficulty": "medium",
-      "status_priority": 1,
       "next_watering_at": "2026-01-28T10:00:00Z",
       "next_fertilizing_at": "2026-02-15T10:00:00Z",
       "last_watered_at": "2026-01-21T10:00:00Z",
@@ -249,7 +247,7 @@ export interface PlantCardListResult {
 
 ### 8.1 Indeksy bazodanowe (istniejące)
 - `plant_card(user_id)` - filtrowanie po użytkowniku
-- `plant_card(status_priority, name)` - sortowanie po priorytecie
+- `plant_card(next_care_at, name)` - sortowanie po najbliższym terminie opieki
 - `plant_card(name)` - wyszukiwanie i sortowanie po nazwie
 - `plant_card(next_watering_at)` - filtr needs_attention
 - `plant_card(next_fertilizing_at)` - filtr needs_attention
@@ -322,7 +320,7 @@ export const listPlantCards = async (
   let baseQuery = supabase
     .from("plant_card")
     .select(
-      `id, name, icon_key, color_hex, difficulty, status_priority,
+      `id, name, icon_key, color_hex, difficulty,
        next_watering_at, next_fertilizing_at, last_watered_at,
        last_fertilized_at, created_at, updated_at`,
       { count: "exact" }
@@ -343,7 +341,7 @@ export const listPlantCards = async (
   }
 
   // Apply sorting
-  const sortColumn = sort === "priority" ? "status_priority" 
+  const sortColumn = sort === "priority" ? "next_care_at" 
                    : sort === "created" ? "created_at" 
                    : "name";
   baseQuery = baseQuery.order(sortColumn, { ascending: direction === "asc" });

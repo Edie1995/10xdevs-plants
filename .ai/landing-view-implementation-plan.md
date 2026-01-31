@@ -209,7 +209,7 @@ Implementacja może być realizowana na 2 poziomach (rekomendowane oba):
 - **`PlantListQueryDto`** (dla `/api/plants`):
   - `page?: number`, `limit?: number`, `search?: string`, `sort?: ...`, `direction?: ...`, `needs_attention?: boolean` (opcjonalne; w UI zakładek nie musi być eksponowane)
 - **`PlantCardListItemDto`** (do kart w listach):
-  - `id`, `name`, `icon_key`, `color_hex`, `difficulty`, `status_priority`,
+  - `id`, `name`, `icon_key`, `color_hex`, `difficulty`,
   - `next_watering_at`, `next_fertilizing_at`, `last_*_at`, `created_at`, `updated_at`
 
 ### 5.2. ViewModel (istniejące) wykorzystywane w widoku

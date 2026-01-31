@@ -5,8 +5,8 @@
 - Endpoint służy do logowania wykonanej czynności pielęgnacyjnej (podlewanie / nawożenie), także z datą wsteczną.
 - `performed_at` nie może być w przyszłości (≤ dzisiaj).
 - Na podstawie `performed_at` wyznaczany jest sezon, a następnie pobierany jest interwał z `seasonal_schedule`.
-- Aktualizowane są pola z prewyliczonymi terminami w `plant_card`: `last_*_at`, `next_*_at` oraz `status_priority`.
-- `status_priority` ma semantykę: 0 = zaległe (overdue), 1 = dzisiaj, 2 = w przyszłości.
+- Aktualizowane są pola z prewyliczonymi terminami w `plant_card`: `last_*_at` oraz `next_*_at`.
+- Priorytet jest wyliczany z najbliższej daty `next_*_at` (0 = zaległe, 1 = dzisiaj, 2 = w przyszłości).
 - Dla nawożenia, gdy `fertilizing_interval = 0`, endpoint ma zwrócić 400 z komunikatem „Fertilizing disabled for this season”.
 
 2. Parametry wymagane i opcjonalne
@@ -73,7 +73,7 @@
 </analysis>
 
 ## 1. Przegląd punktu końcowego
-- **Cel**: Utworzenie wpisu w `care_log` (podlewanie/nawożenie) i natychmiastowa aktualizacja pól prewyliczonych w `plant_card` (`last_*_at`, `next_*_at`, `status_priority`) na podstawie sezonowego harmonogramu.
+- **Cel**: Utworzenie wpisu w `care_log` (podlewanie/nawożenie) i natychmiastowa aktualizacja pól prewyliczonych w `plant_card` (`last_*_at`, `next_*_at`) na podstawie sezonowego harmonogramu.
 - **Metoda**: `POST`
 - **URL**: `/api/plants/:id/care-actions`
 - **Prerender**: `export const prerender = false`
@@ -104,7 +104,7 @@
 - **201 Created** (sukces):
   - Envelope: `ApiResponseDto<CareActionResultDto>`
   - `data.care_log`: utworzony rekord `care_log` (bez `plant_card_id`).
-  - `data.plant`: zaktualizowany „list item” rośliny (pola zgodne z `PlantCardListItemDto`, w szczególności `last_*_at`, `next_*_at`, `status_priority`).
+  - `data.plant`: zaktualizowany „list item” rośliny (pola zgodne z `PlantCardListItemDto`, w szczególności `last_*_at`, `next_*_at`).
 - **400 Bad Request**:
   - Envelope: `ApiResponseDto<null>`
   - `error.code`: np. `validation_error`, `fertilizing_disabled`, `schedule_missing`, `performed_at_in_future`
@@ -142,7 +142,7 @@
      - `last_watered_at` lub `last_fertilized_at` ustawione na `effectivePerformedAt` (jako `timestamptz`, np. `YYYY-MM-DDT00:00:00.000Z`).
      - `next_watering_at` / `next_fertilizing_at`:
        - `performed_at + interval` w UTC, zapis w `timestamptz`.
-     - `status_priority` liczony **po dacie** (nie po czasie):
+     - Priorytet liczony **po dacie** (nie po czasie) na podstawie wcześniejszej z `next_*_at`:
        - 0 jeśli nearest(next_*) < today
        - 1 jeśli nearest(next_*) == today
        - 2 jeśli nearest(next_*) > today
@@ -201,7 +201,6 @@
 
 ## 9. Kroki implementacji
 1. **Ustalić źródło `userId`**:
-   - Docelowo: user z Supabase Auth (401 jeśli brak).
    - Tymczasowo (jeśli projekt nadal używa placeholdera): `DEFAULT_USER_ID` jak w istniejących endpointach, ale oznaczyć jako TODO i przygotować punkt pod łatwą wymianę.
 2. **Zaimplementować walidację w route** (`src/pages/api/plants/[id]/care-actions.ts`):
    - dodać `bodySchema` dla `CareActionCreateCommand` (z refinements dla `performed_at`).
@@ -229,7 +228,7 @@
 7. **(Opcjonalnie) Zaplanować atomowość**:
    - jeśli wymagane przez produkt: dodać funkcję Postgres/RPC, a serwis przełączyć na `supabase.rpc(...)`.
 8. **Testy / weryfikacja ręczna**:
-   - Logowanie podlewania „dzisiaj” → 201, `next_watering_at` = today + interval, `status_priority` poprawny.
+   - Logowanie podlewania „dzisiaj” → 201, `next_watering_at` = today + interval, priorytet poprawny.
    - Logowanie z `performed_at` w przyszłości → 400.
    - Logowanie nawożenia przy `fertilizing_interval = 0` → 400 `"Fertilizing disabled for this season"`.
    - Brak rośliny / roślina innego usera → 404.

@@ -121,7 +121,7 @@ Endpoint służy do **atomowej (z perspektywy API) aktualizacji kompletu harmono
      - usuń istniejące wpisy dla `plant_card_id`
      - wstaw 4 wpisy z payloadu (zapewnia świeże `created_at/updated_at`, bo brak triggerów w DB).
    - (Opcjonalnie, ale zalecane dla spójności aplikacji) przeliczenie:
-     - `next_watering_at`, `next_fertilizing_at`, `status_priority` w `plant_card`
+     - `next_watering_at`, `next_fertilizing_at` w `plant_card`
      - na podstawie istniejącej logiki (jak w `updatePlantCard`), z uwzględnieniem zasady: `fertilizing_interval = 0` → `next_fertilizing_at = null`.
 3. **Odczyt i zwrot danych**:
    - Pobierz aktualne wiersze `seasonal_schedule` dla `plant_card_id` i zwróć jako `SeasonalScheduleDto[]` w `ApiResponseDto`.
@@ -184,7 +184,7 @@ Endpoint służy do **atomowej (z perspektywy API) aktualizacji kompletu harmono
      - `assertPlantOwnershipOrNotFound`
      - `delete from seasonal_schedule where plant_card_id = plantId`
      - `insert` 4 wiersze (`plant_card_id`, `season`, `watering_interval`, `fertilizing_interval`)
-     - (opcjonalnie) przelicz `next_*` oraz `status_priority` jak w `updatePlantCard`
+     - (opcjonalnie) przelicz `next_*` oraz wynikowy status jak w `updatePlantCard`
      - `select` i zwróć aktualne harmonogramy posortowane po `season` (stabilność odpowiedzi).
 5. **Podłącz service w endpoint**:
    - Wywołaj `updatePlantSchedules(...)`

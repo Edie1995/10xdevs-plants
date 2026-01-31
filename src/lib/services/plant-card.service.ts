@@ -85,6 +85,33 @@ const assertPlantOwnershipOrNotFound = async (
 
 const SEASON_ORDER: Season[] = ["spring", "summer", "autumn", "winter"];
 
+const getEndOfTodayUtcIso = (): string => {
+  const now = new Date();
+  const endOfTodayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+  return endOfTodayUtc.toISOString();
+};
+
+const getPrioritySortKey = (item: Pick<PlantCardRow, "next_watering_at" | "next_fertilizing_at">) =>
+  computeStatusPriority(item.next_watering_at, item.next_fertilizing_at);
+
+const sortByPriority = <T extends { name: string } & Pick<PlantCardRow, "next_watering_at" | "next_fertilizing_at">>(
+  items: T[],
+  direction: "asc" | "desc"
+): T[] => {
+  const sorted = [...items].sort((left, right) => {
+    const leftPriority = getPrioritySortKey(left);
+    const rightPriority = getPrioritySortKey(right);
+
+    if (leftPriority !== rightPriority) {
+      return leftPriority - rightPriority;
+    }
+
+    return left.name.localeCompare(right.name, "pl");
+  });
+
+  return direction === "desc" ? sorted.reverse() : sorted;
+};
+
 const buildPlantCardUpdateData = (
   command: Partial<Omit<PlantCardUpdateCommand, "schedules" | "diseases">>
 ): Partial<PlantCardRow> => {
@@ -106,11 +133,11 @@ const buildPlantCardUpdateData = (
   return updateData;
 };
 
-const recalculateNextDatesAndPriority = (
+const recalculateNextDates = (
   lastWateredAt: string | null,
   lastFertilizedAt: string | null,
   schedules: SeasonalScheduleCommand[]
-): Pick<PlantCardRow, "next_watering_at" | "next_fertilizing_at" | "status_priority"> => {
+): Pick<PlantCardRow, "next_watering_at" | "next_fertilizing_at"> => {
   const scheduleBySeason = new Map(schedules.map((schedule) => [schedule.season, schedule]));
 
   const computeNextDate = (lastDateRaw: string | null, interval: number | undefined, zeroIsNull = false) => {
@@ -141,12 +168,9 @@ const recalculateNextDatesAndPriority = (
     nextFertilizingAt = computeNextDate(lastFertilizedAt, schedule?.fertilizing_interval, true);
   }
 
-  const statusPriority = computeStatusPriority(nextWateringAt, nextFertilizingAt);
-
   return {
     next_watering_at: nextWateringAt,
     next_fertilizing_at: nextFertilizingAt,
-    status_priority: statusPriority,
   };
 };
 
@@ -182,7 +206,6 @@ export const getPlantDetail = async (
     "icon_key",
     "color_hex",
     "difficulty",
-    "status_priority",
     "next_watering_at",
     "next_fertilizing_at",
     "last_watered_at",
@@ -275,7 +298,7 @@ export const listPlantCards = async (
   let baseQuery = supabase
     .from("plant_card")
     .select(
-      `id, name, icon_key, color_hex, difficulty, status_priority,
+      `id, name, icon_key, color_hex, difficulty,
        next_watering_at, next_fertilizing_at, last_watered_at,
        last_fertilized_at, created_at, updated_at`,
       { count: "exact" }
@@ -287,11 +310,34 @@ export const listPlantCards = async (
   }
 
   if (needs_attention === true) {
-    const today = new Date().toISOString();
-    baseQuery = baseQuery.or(`next_watering_at.lte.${today},next_fertilizing_at.lte.${today}`);
+    const todayEndUtcIso = getEndOfTodayUtcIso();
+    baseQuery = baseQuery.or(`next_watering_at.lte.${todayEndUtcIso},next_fertilizing_at.lte.${todayEndUtcIso}`);
   }
 
-  const sortColumn = sort === "priority" ? "status_priority" : sort === "created" ? "created_at" : "name";
+  if (sort === "priority") {
+    const { data, error, count } = await baseQuery;
+
+    if (error) {
+      throw error;
+    }
+
+    const items = (data ?? []) as PlantCardListResult["items"];
+    const sortedItems = sortByPriority(items, direction);
+    const total = count ?? items.length;
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      items: sortedItems.slice(offset, offset + limit),
+      pagination: {
+        page,
+        limit,
+        total,
+        total_pages: totalPages,
+      },
+    };
+  }
+
+  const sortColumn = sort === "created" ? "created_at" : "name";
   baseQuery = baseQuery.order(sortColumn, { ascending: direction === "asc" });
 
   if (sortColumn !== "name") {
@@ -387,7 +433,7 @@ export const updatePlantCard = async (
 
   const { data: currentPlant, error: currentError } = await supabase
     .from("plant_card")
-    .select("id, last_watered_at, last_fertilized_at, next_watering_at, next_fertilizing_at, status_priority")
+    .select("id, last_watered_at, last_fertilized_at, next_watering_at, next_fertilizing_at")
     .eq("id", plantId)
     .eq("user_id", userId)
     .single();
@@ -430,16 +476,11 @@ export const updatePlantCard = async (
       }
     }
 
-    const nextValues = recalculateNextDatesAndPriority(
-      currentPlant.last_watered_at,
-      currentPlant.last_fertilized_at,
-      schedules
-    );
+    const nextValues = recalculateNextDates(currentPlant.last_watered_at, currentPlant.last_fertilized_at, schedules);
 
     const shouldUpdateNext =
       nextValues.next_watering_at !== currentPlant.next_watering_at ||
-      nextValues.next_fertilizing_at !== currentPlant.next_fertilizing_at ||
-      nextValues.status_priority !== currentPlant.status_priority;
+      nextValues.next_fertilizing_at !== currentPlant.next_fertilizing_at;
 
     if (shouldUpdateNext) {
       const { error: nextUpdateError } = await supabase
@@ -497,7 +538,7 @@ export const updatePlantSchedules = async (
 
   const { data: currentPlant, error: currentError } = await supabase
     .from("plant_card")
-    .select("last_watered_at, last_fertilized_at, next_watering_at, next_fertilizing_at, status_priority")
+    .select("last_watered_at, last_fertilized_at, next_watering_at, next_fertilizing_at")
     .eq("id", plantId)
     .eq("user_id", userId)
     .single();
@@ -538,7 +579,7 @@ export const updatePlantSchedules = async (
 
   const scheduleRowsRaw = (schedules ?? []) as unknown as SeasonalScheduleRow[];
 
-  const nextValues = recalculateNextDatesAndPriority(
+  const nextValues = recalculateNextDates(
     currentPlant.last_watered_at,
     currentPlant.last_fertilized_at,
     scheduleRowsRaw.map((schedule) => ({
@@ -550,8 +591,7 @@ export const updatePlantSchedules = async (
 
   const shouldUpdateNext =
     nextValues.next_watering_at !== currentPlant.next_watering_at ||
-    nextValues.next_fertilizing_at !== currentPlant.next_fertilizing_at ||
-    nextValues.status_priority !== currentPlant.status_priority;
+    nextValues.next_fertilizing_at !== currentPlant.next_fertilizing_at;
 
   if (shouldUpdateNext) {
     const { error: nextUpdateError } = await supabase

@@ -1,14 +1,15 @@
 import type { SeasonalScheduleDto } from "../../types";
 import type { ApiErrorViewModel } from "../api/api-client";
 import { formatDisplayDate } from "../date/format";
+import { computeStatusPriority } from "../services/care-schedule.utils";
 
-export type DashboardQueryState = {
+export interface DashboardQueryState {
   page: number;
   limit: number;
   search?: string;
   sort: "priority" | "name" | "created";
   direction: "asc" | "desc";
-};
+}
 
 export const DASHBOARD_QUERY_DEFAULTS: DashboardQueryState = {
   page: 1,
@@ -17,20 +18,20 @@ export const DASHBOARD_QUERY_DEFAULTS: DashboardQueryState = {
   direction: "asc",
 };
 
-export type DashboardStatsVM = {
+export interface DashboardStatsVM {
   totalPlants: number;
   urgent: number;
   warning: number;
-};
+}
 
-export type PaginationVM = {
+export interface PaginationVM {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
-};
+}
 
-export type PlantCardVM = {
+export interface PlantCardVM {
   id: string;
   name: string;
   iconKey: string | null;
@@ -51,22 +52,22 @@ export type PlantCardVM = {
     detailsHref: string;
     scheduleHref: string;
   };
-};
+}
 
-export type DashboardViewModel = {
+export interface DashboardViewModel {
   requiresAttention: PlantCardVM[];
   allPlants: PlantCardVM[];
   stats: DashboardStatsVM;
   pagination: PaginationVM;
   query: DashboardQueryState;
-};
+}
 
-export type PlantScheduleStateVM = {
+export interface PlantScheduleStateVM {
   status: "unknown" | "loading" | "ready" | "missing" | "incomplete" | "error";
   schedules?: SeasonalScheduleDto[];
   lastCheckedAt?: number;
   error?: ApiErrorViewModel;
-};
+}
 
 const toDateKey = (value: Date) =>
   value.getUTCFullYear() * 10000 + (value.getUTCMonth() + 1) * 100 + value.getUTCDate();
@@ -95,16 +96,16 @@ const getDueTone = (value?: string | null) => {
   return "future";
 };
 
-const mapStatus = (priority: number) => {
-  if (priority >= 2) {
-    return { label: "Pilne", tone: "danger" as const };
+const mapStatus = (priority: number): { label: PlantCardVM["statusLabel"]; tone: PlantCardVM["statusTone"] } => {
+  if (priority <= 0) {
+    return { label: "Pilne", tone: "danger" };
   }
 
   if (priority === 1) {
-    return { label: "Na dziś", tone: "warning" as const };
+    return { label: "Na dziś", tone: "warning" };
   }
 
-  return { label: "OK", tone: "neutral" as const };
+  return { label: "OK", tone: "neutral" };
 };
 
 export const mapPlantCardDto = (item: {
@@ -113,11 +114,11 @@ export const mapPlantCardDto = (item: {
   icon_key: string | null;
   color_hex: string | null;
   difficulty: "easy" | "medium" | "hard" | null;
-  status_priority: number;
   next_watering_at?: string | null;
   next_fertilizing_at?: string | null;
 }): PlantCardVM => {
-  const status = mapStatus(item.status_priority);
+  const statusPriority = computeStatusPriority(item.next_watering_at ?? null, item.next_fertilizing_at ?? null);
+  const status = mapStatus(statusPriority);
 
   return {
     id: item.id,
@@ -125,7 +126,7 @@ export const mapPlantCardDto = (item: {
     iconKey: item.icon_key,
     colorHex: item.color_hex,
     difficulty: item.difficulty,
-    statusPriority: (item.status_priority >= 2 ? 2 : item.status_priority <= 0 ? 0 : 1) as 0 | 1 | 2,
+    statusPriority: statusPriority as 0 | 1 | 2,
     statusLabel: status.label,
     statusTone: status.tone,
     nextWateringAt: item.next_watering_at,
@@ -145,8 +146,8 @@ export const mapPlantCardDto = (item: {
 
 export const buildDashboardViewModel = (
   data: {
-    requires_attention: Array<Parameters<typeof mapPlantCardDto>[0]>;
-    all_plants: Array<Parameters<typeof mapPlantCardDto>[0]>;
+    requires_attention: Parameters<typeof mapPlantCardDto>[0][];
+    all_plants: Parameters<typeof mapPlantCardDto>[0][];
     stats: { total_plants: number; urgent: number; warning: number };
   },
   pagination: PaginationVM,

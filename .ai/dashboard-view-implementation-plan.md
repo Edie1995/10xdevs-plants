@@ -232,7 +232,7 @@ Z `src/types.ts`:
   - `stats: DashboardStatsDto`
 - `DashboardStatsDto`: `{ total_plants, urgent, warning }`
 - `DashboardQueryDto`: `{ page?, limit?, search?, sort?, direction? }`
-- `PlantCardListItemDto`: pola karty do list (id, name, icon/color, status_priority, next/last care dates, created/updated)
+- `PlantCardListItemDto`: pola karty do list (id, name, icon/color, next/last care dates, created/updated)
 - `SeasonalScheduleDto` (dla `GET /api/plants/:id/schedules`)
 - `CareActionCreateCommand` i `CareActionResultDto` (dla `POST /api/plants/:id/care-actions`)
 
@@ -493,7 +493,7 @@ UI musi weryfikować i odpowiednio odzwierciedlać wymagania API:
      - jeśli `query.search` i `allPlants.length === 0` → No results (US-035).
 
 7. **Zaimplementuj `PlantCard` + quick actions**
-   - `PlantCard` renderuje status i terminy (format `DD.MM.RRRR` + kolorystyka zgodna z `status_priority` i US-020).
+   - `PlantCard` renderuje status i terminy (format `DD.MM.RRRR` + kolorystyka zgodna z wyliczonym priorytetem i US-020).
    - Dodaj `QuickActions` + `BackdateCareActionModal`.
 
 8. **Dodaj cache harmonogramów i logikę blokad**

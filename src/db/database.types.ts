@@ -103,6 +103,7 @@ export interface Database {
           last_fertilized_at: string | null;
           last_watered_at: string | null;
           name: string;
+          next_care_at: string | null;
           next_fertilizing_at: string | null;
           next_watering_at: string | null;
           notes: string | null;
@@ -111,7 +112,6 @@ export interface Database {
           propagation_instructions: string | null;
           repotting_instructions: string | null;
           soil: string | null;
-          status_priority: number;
           updated_at: string;
           user_id: string;
           watering_instructions: string | null;
@@ -133,7 +133,6 @@ export interface Database {
           propagation_instructions?: string | null;
           repotting_instructions?: string | null;
           soil?: string | null;
-          status_priority?: number;
           updated_at?: string;
           user_id: string;
           watering_instructions?: string | null;
@@ -155,7 +154,6 @@ export interface Database {
           propagation_instructions?: string | null;
           repotting_instructions?: string | null;
           soil?: string | null;
-          status_priority?: number;
           updated_at?: string;
           user_id?: string;
           watering_instructions?: string | null;
