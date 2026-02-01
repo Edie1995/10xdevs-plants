@@ -1,11 +1,12 @@
 import type { AstroCookies } from "astro";
+import { PUBLIC_SUPABASE_KEY, PUBLIC_SUPABASE_URL } from "astro:env/client";
 import { createServerClient, type CookieOptionsWithName } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 
 import type { Database } from "../db/database.types.ts";
 
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL ?? import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_KEY ?? import.meta.env.SUPABASE_KEY;
+const supabaseUrl = PUBLIC_SUPABASE_URL ?? import.meta.env.SUPABASE_URL;
+const supabaseAnonKey = PUBLIC_SUPABASE_KEY ?? import.meta.env.SUPABASE_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Missing Supabase configuration (SUPABASE_URL / SUPABASE_KEY).");

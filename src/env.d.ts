@@ -19,10 +19,14 @@ interface ImportMetaEnv {
   readonly PUBLIC_SUPABASE_KEY: string;
   readonly SUPABASE_URL: string;
   readonly SUPABASE_KEY: string;
-  readonly OPENROUTER_API_KEY: string;
   // more env variables...
 }
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
+}
+
+declare module "astro:env/client" {
+  export const PUBLIC_SUPABASE_URL: string;
+  export const PUBLIC_SUPABASE_KEY: string;
 }
