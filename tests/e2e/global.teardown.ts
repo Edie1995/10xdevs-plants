@@ -1,11 +1,19 @@
 import { test as teardown } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
+import fs from "node:fs";
 import path from "node:path";
 
 import type { Database } from "../../src/db/database.types";
 
-dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
+const envPath = path.resolve(process.cwd(), ".env.test");
+if (!process.env.CI && fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+}
+
+if (process.env.SUPABASE_PUBLIC_KEY && !process.env.SUPABASE_KEY) {
+  process.env.SUPABASE_KEY = process.env.SUPABASE_PUBLIC_KEY;
+}
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
