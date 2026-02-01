@@ -50,6 +50,22 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
+      - name: Check e2e env presence
+        run: |
+          required_vars=(
+            SUPABASE_URL
+            SUPABASE_PUBLIC_KEY
+            E2E_USERNAME_ID
+            E2E_USER_EMAIL
+            E2E_PASSWORD
+          )
+          for var in "${required_vars[@]}"; do
+            if [[ -z "${!var}" ]]; then
+              echo "::error title=Missing env::${var} is not set"
+            else
+              echo "::notice title=Env present::${var} is set"
+            fi
+          done
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       - name: Run e2e tests with coverage
