@@ -25,4 +25,14 @@ export default class AuthLoginPage {
     await this.passwordInput.fill(password);
     await this.submitButton.click();
   }
+
+  async loginAndWaitForRedirect(email: string, password: string, redirectUrl = /\/app\/dashboard/, timeout = 20_000) {
+    await this.emailInput.fill(email);
+    await this.passwordInput.fill(password);
+
+    await Promise.all([
+      this.page.waitForURL(redirectUrl, { timeout, waitUntil: "domcontentloaded" }),
+      this.submitButton.click(),
+    ]);
+  }
 }

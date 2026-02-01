@@ -1,4 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+import fs from "node:fs";
+import path from "node:path";
+
+const envPath = path.resolve(process.cwd(), ".env.test");
+if (!process.env.CI && fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+}
 
 if (process.env.SUPABASE_PUBLIC_KEY && !process.env.SUPABASE_KEY) {
   process.env.SUPABASE_KEY = process.env.SUPABASE_PUBLIC_KEY;

@@ -52,7 +52,7 @@ test("dashboard updates attention list after watering actions", async ({ page })
   const createdPlantIds: string[] = [];
 
   await authPage.goto("/app/dashboard");
-  await Promise.all([page.waitForURL(/\/app\/dashboard/, { timeout: 10_000 }), authPage.login(email, password)]);
+  await authPage.loginAndWaitForRedirect(email, password);
 
   const buildAuthHeaders = async (): Promise<Record<string, string> | undefined> => {
     const cookies = await page.context().cookies();
