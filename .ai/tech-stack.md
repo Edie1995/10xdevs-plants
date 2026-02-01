@@ -14,6 +14,7 @@ Backend - Supabase jako kompleksowe rozwiązanie backendowe:
 CI/CD i Hosting:
 - Github Actions do tworzenia pipeline’ów CI/CD
 - DigitalOcean do hostowania aplikacji za pośrednictwem obrazu docker
+- Cloudflare Pages + Workers do hostingu Astro na edge (SSR + statyczny CDN)
 
 Testy:
 - Testy jednostkowe i integracyjne (TypeScript): Vitest

@@ -15,6 +15,7 @@ Greenie is a responsive, login-only web utility for private management of home a
 - [Project name](#project-name)
 - [Project description](#project-description)
 - [Tech stack](#tech-stack)
+- [Deployments & releases](#deployments--releases)
 - [Getting started locally](#getting-started-locally)
 - [Available scripts](#available-scripts)
 - [API](#api)
@@ -37,6 +38,7 @@ Backend
 CI/CD and hosting
 - GitHub Actions
 - DigitalOcean (Docker-based deployment)
+- Cloudflare Pages + Workers (edge hosting for Astro with SSR)
 
 Tooling
 - ESLint
@@ -48,6 +50,14 @@ Testing
 - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) (optional, for React UI tests)
 - [MSW](https://mswjs.io/) (optional, API mocking in UI tests)
 - [Playwright](https://playwright.dev/) (end-to-end tests)
+
+## Deployments & releases
+
+We selected Cloudflare Pages + Workers for production hosting to align with Astro's edge-friendly SSR
+and keep a low-cost path for early-stage traffic while preserving room to scale. Key benefits:
+- Global edge network with fast cold starts for SSR and static assets
+- Predictable costs for a hobby project, with a smooth upgrade path if it becomes commercial
+- Git-based deployments with preview environments for release confidence
 
 ## Getting started locally
 
