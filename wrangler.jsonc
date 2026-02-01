@@ -1,11 +1,6 @@
 {
   "name": "greenie",
-  "pages_build_output_dir": "dist",
-  "compatibility_date": "2024-11-01",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "observability": {
-    "enabled": true
-  }
+  "compatibility_flags": ["nodejs_compat", "disable_nodejs_process_v2"],
+  "compatibility_date": "2025-10-14",
+  "pages_build_output_dir": "dist"
 }
