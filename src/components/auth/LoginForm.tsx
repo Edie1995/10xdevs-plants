@@ -12,10 +12,10 @@ interface LoginFormProps {
   initialEmail?: string;
 }
 
-type LoginErrors = {
+interface LoginErrors {
   email?: string;
   password?: string;
-};
+}
 
 const isValidEmail = (value: string) => /^\S+@\S+\.\S+$/.test(value);
 const sanitizeRedirectPath = (value?: string) => {
@@ -110,9 +110,7 @@ export default function LoginForm({ redirectTo, initialEmail }: LoginFormProps) 
       }
     >
       <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-        {redirectTo ? (
-          <input type="hidden" name="redirectTo" value={redirectTo} />
-        ) : null}
+        {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
         {formError ? (
           <p className="text-sm text-red-600" role="alert">
             {formError}

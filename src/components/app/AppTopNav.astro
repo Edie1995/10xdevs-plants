@@ -8,34 +8,32 @@ interface Props {
 
 const { items, activePathname } = Astro.props;
 
-const isActivePath = (href: string) =>
-  activePathname === href || activePathname.startsWith(`${href}/`);
+const isActivePath = (href: string) => activePathname === href || activePathname.startsWith(`${href}/`);
 ---
 
 <nav aria-label="Nawigacja aplikacji" class="hidden md:flex items-center gap-2">
-  {items.map((item) => {
-    const isActive = isActivePath(item.href);
-    return (
-      <a
-        href={item.href}
-        aria-current={isActive ? "page" : undefined}
-        aria-label={item.ariaLabel}
-        class={[
-          "rounded-full border px-4 py-2 text-sm font-medium transition",
-          isActive
-            ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
-            : "border-transparent text-neutral-600 hover:border-neutral-200 hover:bg-neutral-100 hover:text-neutral-900",
-        ].join(" ")}
-      >
-        <span class="block">{item.label}</span>
-        <span
+  {
+    items.map((item) => {
+      const isActive = isActivePath(item.href);
+      return (
+        <a
+          href={item.href}
+          aria-current={isActive ? "page" : undefined}
+          aria-label={item.ariaLabel}
           class={[
-            "mt-1 block h-1 w-5 rounded-full",
-            isActive ? "bg-white" : "bg-transparent",
+            "rounded-full border px-4 py-2 text-sm font-medium transition",
+            isActive
+              ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
+              : "border-transparent text-neutral-600 hover:border-neutral-200 hover:bg-neutral-100 hover:text-neutral-900",
           ].join(" ")}
-          aria-hidden="true"
-        />
-      </a>
-    );
-  })}
+        >
+          <span class="block">{item.label}</span>
+          <span
+            class={["mt-1 block h-1 w-5 rounded-full", isActive ? "bg-white" : "bg-transparent"].join(" ")}
+            aria-hidden="true"
+          />
+        </a>
+      );
+    })
+  }
 </nav>

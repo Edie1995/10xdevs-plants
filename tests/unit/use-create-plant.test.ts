@@ -52,8 +52,8 @@ describe("useCreatePlant", () => {
             { season: "autumn", watering_interval: 0, fertilizing_interval: 0 },
             { season: "winter", watering_interval: 0, fertilizing_interval: 0 },
           ],
-        }),
-      ),
+        })
+      )
     );
 
     expect(apiPostMock).not.toHaveBeenCalled();
@@ -83,8 +83,8 @@ describe("useCreatePlant", () => {
             { name: " ", symptoms: "ok", advice: "ok" },
             { name: "x".repeat(60), symptoms: "ok", advice: "ok" },
           ],
-        }),
-      ),
+        })
+      )
     );
 
     expect(apiPostMock).not.toHaveBeenCalled();
@@ -177,8 +177,8 @@ describe("useCreatePlant", () => {
             { season: "summer", watering_interval: 0, fertilizing_interval: 0 },
           ],
           diseases: [{ name: "  Zgnilizna ", symptoms: "  objawy ", advice: "  " }],
-        }),
-      ),
+        })
+      )
     );
 
     const [path, payload] = apiPostMock.mock.calls[0];

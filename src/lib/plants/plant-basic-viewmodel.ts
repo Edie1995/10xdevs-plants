@@ -1,6 +1,6 @@
 import type { DifficultyLevel, PlantCardDetailDto, PlantCardUpdateCommand } from "../../types";
 
-export type PlantBasicDraftVM = {
+export interface PlantBasicDraftVM {
   name: string;
   soil: string | null;
   pot: string | null;
@@ -12,12 +12,12 @@ export type PlantBasicDraftVM = {
   notes: string | null;
   icon_key: string | null;
   color_hex: string | null;
-};
+}
 
-export type PlantBasicErrorsVM = {
+export interface PlantBasicErrorsVM {
   form?: string;
   fields?: Partial<Record<keyof PlantBasicDraftVM, string>>;
-};
+}
 
 const COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
 
@@ -54,15 +54,12 @@ export const mapPlantBasicDraftToCommand = (draft: PlantBasicDraftVM): PlantCard
   color_hex: normalizeOptionalString(draft.color_hex),
 });
 
-export const buildPlantBasicDiff = (
-  base: PlantBasicDraftVM,
-  draft: PlantBasicDraftVM,
-): PlantCardUpdateCommand => {
+export const buildPlantBasicDiff = (base: PlantBasicDraftVM, draft: PlantBasicDraftVM): PlantCardUpdateCommand => {
   const normalizedBase = mapPlantBasicDraftToCommand(base);
   const normalizedDraft = mapPlantBasicDraftToCommand(draft);
   const diff: PlantCardUpdateCommand = {};
 
-  (Object.keys(normalizedDraft) as Array<keyof PlantCardUpdateCommand>).forEach((key) => {
+  (Object.keys(normalizedDraft) as (keyof PlantCardUpdateCommand)[]).forEach((key) => {
     if (normalizedDraft[key] !== normalizedBase[key]) {
       diff[key] = normalizedDraft[key];
     }
@@ -73,11 +70,13 @@ export const buildPlantBasicDiff = (
 
 export const validatePlantBasicDraft = (draft: PlantBasicDraftVM): PlantBasicErrorsVM | null => {
   const errors: PlantBasicErrorsVM = { fields: {} };
+  const fields = errors.fields ?? {};
+  errors.fields = fields;
 
   const checkMax = (field: keyof PlantBasicDraftVM, max: number) => {
     const value = draft[field];
     if (typeof value === "string" && value.trim().length > max) {
-      errors.fields![field] = `Maksymalnie ${max} znakow.`;
+      fields[field] = `Maksymalnie ${max} znakow.`;
     }
   };
 
@@ -92,7 +91,7 @@ export const validatePlantBasicDraft = (draft: PlantBasicDraftVM): PlantBasicErr
   checkMax("icon_key", 50);
 
   if (draft.color_hex && !COLOR_REGEX.test(draft.color_hex.trim())) {
-    errors.fields!.color_hex = "Niepoprawny format koloru.";
+    fields.color_hex = "Niepoprawny format koloru.";
   }
 
   const hasErrors = Boolean(errors.form) || Object.keys(errors.fields ?? {}).length > 0;
@@ -106,6 +105,8 @@ export const mapPlantBasicApiErrors = (details: unknown): PlantBasicErrorsVM | n
   }
 
   const errors: PlantBasicErrorsVM = { fields: {} };
+  const fields = errors.fields ?? {};
+  errors.fields = fields;
 
   if (payload.formErrors && payload.formErrors.length > 0) {
     errors.form = payload.formErrors[0];
@@ -116,7 +117,7 @@ export const mapPlantBasicApiErrors = (details: unknown): PlantBasicErrorsVM | n
     if (!message) {
       return;
     }
-    errors.fields![field as keyof PlantBasicDraftVM] = message;
+    fields[field as keyof PlantBasicDraftVM] = message;
   });
 
   const hasErrors = Boolean(errors.form) || Object.keys(errors.fields ?? {}).length > 0;

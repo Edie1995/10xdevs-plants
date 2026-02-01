@@ -2,19 +2,19 @@ import type { Page } from "@playwright/test";
 
 import type { Season } from "../../../src/types";
 
-type BasicsFields = {
+interface BasicsFields {
   name?: string;
   difficulty?: "easy" | "medium" | "hard";
   soil?: string;
   pot?: string;
   position?: string;
-};
+}
 
-type DiseaseFields = {
+interface DiseaseFields {
   name?: string;
   symptoms?: string;
   advice?: string;
-};
+}
 
 export default class NewPlantPage {
   constructor(private readonly page: Page) {}

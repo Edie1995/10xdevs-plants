@@ -4,12 +4,20 @@ import { render, screen } from "@testing-library/react";
 import type { PlantCardVM } from "../../src/lib/dashboard/dashboard-viewmodel";
 import RequiresAttentionSection from "../../src/components/dashboard/RequiresAttentionSection";
 
-const plantCardPropsRef = vi.hoisted(
-  () => ({ current: [] as Array<{ plant: PlantCardVM; onCareActionCompleted: () => void; onNavigateToSchedule: (id: string) => void }> })
-);
+const plantCardPropsRef = vi.hoisted(() => ({
+  current: [] as {
+    plant: PlantCardVM;
+    onCareActionCompleted: () => void;
+    onNavigateToSchedule: (id: string) => void;
+  }[],
+}));
 
 vi.mock("../../src/components/plants/PlantCard", () => ({
-  default: (props: { plant: PlantCardVM; onCareActionCompleted: () => void; onNavigateToSchedule: (id: string) => void }) => {
+  default: (props: {
+    plant: PlantCardVM;
+    onCareActionCompleted: () => void;
+    onNavigateToSchedule: (id: string) => void;
+  }) => {
     plantCardPropsRef.current.push(props);
     return <div data-testid="PlantCard" />;
   },

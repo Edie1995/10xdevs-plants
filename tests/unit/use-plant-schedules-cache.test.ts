@@ -10,7 +10,7 @@ vi.mock("../../src/lib/api/api-client", () => ({
   apiGet: apiGetMock,
 }));
 
-const buildResult = <T,>(payload: Partial<ApiResult<T>>): ApiResult<T> => ({
+const buildResult = <T>(payload: Partial<ApiResult<T>>): ApiResult<T> => ({
   data: null,
   error: null,
   httpStatus: 200,
@@ -69,7 +69,7 @@ describe("usePlantSchedulesCache", () => {
     apiGetMock.mockResolvedValue(
       buildResult<SeasonalScheduleDto[]>({
         data: schedules,
-      }),
+      })
     );
 
     const usePlantSchedulesCache = await loadHook();
@@ -92,7 +92,7 @@ describe("usePlantSchedulesCache", () => {
     apiGetMock.mockResolvedValue(
       buildResult<SeasonalScheduleDto[]>({
         data: [],
-      }),
+      })
     );
 
     const usePlantSchedulesCache = await loadHook();
@@ -124,7 +124,7 @@ describe("usePlantSchedulesCache", () => {
     apiGetMock.mockResolvedValue(
       buildResult<SeasonalScheduleDto[]>({
         data: schedules,
-      }),
+      })
     );
 
     const usePlantSchedulesCache = await loadHook();
@@ -156,7 +156,7 @@ describe("usePlantSchedulesCache", () => {
       buildResult<SeasonalScheduleDto[]>({
         data: null,
         error: { code: "schedule_incomplete", message: "Incomplete" },
-      }),
+      })
     );
 
     const usePlantSchedulesCache = await loadHook();
@@ -183,7 +183,7 @@ describe("usePlantSchedulesCache", () => {
       buildResult<SeasonalScheduleDto[]>({
         data: null,
         error: { code: "not_found", message: "Not found", httpStatus: 404 },
-      }),
+      })
     );
 
     const usePlantSchedulesCache = await loadHook();
@@ -211,7 +211,7 @@ describe("usePlantSchedulesCache", () => {
       buildResult<SeasonalScheduleDto[]>({
         data: null,
         error: { code: "http_500", message: "Server error", httpStatus: 500 },
-      }),
+      })
     );
 
     const usePlantSchedulesCache = await loadHook();

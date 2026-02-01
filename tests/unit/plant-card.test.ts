@@ -75,9 +75,7 @@ describe("PlantCard.handlePlantCardError", () => {
       toastError,
     });
 
-    expect(window.location.href).toBe(
-      "/auth/login?redirectTo=http%3A%2F%2Fexample.test%2Fapp",
-    );
+    expect(window.location.href).toBe("/auth/login?redirectTo=http%3A%2F%2Fexample.test%2Fapp");
     expect(setActionError).not.toHaveBeenCalled();
   });
 
@@ -101,7 +99,7 @@ describe("PlantCard.handlePlantCardError", () => {
     expect(setActionError).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "Nie znaleziono rosliny. Odswiezam liste.",
-      }),
+      })
     );
     expect(onCareActionCompleted).toHaveBeenCalled();
     expect(toastError).toHaveBeenCalledWith("Nie znaleziono rosliny. Lista zostanie odswiezona.");

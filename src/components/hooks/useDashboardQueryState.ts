@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import {
-  DASHBOARD_QUERY_DEFAULTS,
-  type DashboardQueryState,
-} from "../../lib/dashboard/dashboard-viewmodel";
+import { DASHBOARD_QUERY_DEFAULTS, type DashboardQueryState } from "../../lib/dashboard/dashboard-viewmodel";
 
 type QueryPatch = Partial<DashboardQueryState> | ((prev: DashboardQueryState) => DashboardQueryState);
 

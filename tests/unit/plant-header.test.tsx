@@ -3,13 +3,16 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import type { ApiErrorViewModel } from "../../src/lib/api/api-client";
 import type { PlantScheduleStateVM } from "../../src/lib/dashboard/dashboard-viewmodel";
+import type React from "react";
 import PlantHeader from "../../src/components/plants/PlantHeader";
 import { toast } from "sonner";
 
-const quickActionsPropsRef = vi.hoisted(() => ({ current: null as any }));
+type QuickActionsProps = React.ComponentProps<typeof import("../../src/components/plants/QuickActions").default>;
+
+const quickActionsPropsRef = vi.hoisted(() => ({ current: null as QuickActionsProps | null }));
 
 vi.mock("../../src/components/plants/QuickActions", () => ({
-  default: (props: any) => {
+  default: (props: QuickActionsProps) => {
     quickActionsPropsRef.current = props;
     return <button type="button">QuickActions</button>;
   },
@@ -50,7 +53,7 @@ describe("PlantHeader", () => {
         onDelete={vi.fn()}
         onNavigateToSchedule={onNavigateToSchedule}
         onApiError={vi.fn()}
-      />,
+      />
     );
 
     expect(screen.getByText("Ustaw harmonogram, aby korzystac z akcji pielegnacyjnych.")).toBeInTheDocument();
@@ -76,10 +79,10 @@ describe("PlantHeader", () => {
         onDelete={vi.fn()}
         onNavigateToSchedule={vi.fn()}
         onApiError={onApiError}
-      />,
+      />
     );
 
-    quickActionsPropsRef.current.onError(error);
+    quickActionsPropsRef.current?.onError(error);
 
     await waitFor(() => {
       expect(onApiError).toHaveBeenCalledWith(error);
@@ -104,10 +107,10 @@ describe("PlantHeader", () => {
         onDelete={vi.fn()}
         onNavigateToSchedule={vi.fn()}
         onApiError={vi.fn()}
-      />,
+      />
     );
 
-    quickActionsPropsRef.current.onError(error);
+    quickActionsPropsRef.current?.onError(error);
 
     await waitFor(() => {
       expect(toast).toHaveBeenCalledWith("Ustaw harmonogram, aby korzystac z akcji.");
@@ -128,7 +131,7 @@ describe("PlantHeader", () => {
         onDelete={onDelete}
         onNavigateToSchedule={vi.fn()}
         onApiError={vi.fn()}
-      />,
+      />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Edytuj" }));

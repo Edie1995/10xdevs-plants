@@ -1,7 +1,7 @@
 import type { PlantCardDetailDto } from "../../types";
 import { mapPlantCardDto } from "../dashboard/dashboard-viewmodel";
 
-export type PlantHeaderVM = {
+export interface PlantHeaderVM {
   id: string;
   name: string;
   iconKey: string | null;
@@ -15,7 +15,7 @@ export type PlantHeaderVM = {
     detailsHref: string;
     scheduleHref: string;
   };
-};
+}
 
 export const mapPlantDetailToHeader = (plant: PlantCardDetailDto): PlantHeaderVM => {
   const cardVm = mapPlantCardDto(plant);

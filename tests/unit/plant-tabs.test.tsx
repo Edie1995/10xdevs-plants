@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import type { PlantTabKey } from "../../src/types";
 import PlantTabs from "../../src/components/plants/PlantTabs";
 
-const tabs: Array<{ key: PlantTabKey; label: string }> = [
+const tabs: { key: PlantTabKey; label: string }[] = [
   { key: "basic", label: "Podstawy" },
   { key: "schedule", label: "Harmonogram" },
 ];

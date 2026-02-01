@@ -1,12 +1,7 @@
 import { useCallback, useState } from "react";
 
 import { apiPost, type ApiErrorViewModel } from "../../lib/api/api-client";
-import type {
-  DiseaseCommand,
-  PlantCardCreateCommand,
-  PlantCardDetailDto,
-  SeasonalScheduleCommand,
-} from "../../types";
+import type { DiseaseCommand, PlantCardCreateCommand, PlantCardDetailDto, SeasonalScheduleCommand } from "../../types";
 import type { NewPlantFormErrors, NewPlantFormValues } from "../../lib/plants/new-plant-viewmodel";
 
 const COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
@@ -60,6 +55,27 @@ const createEmptyErrors = (): NewPlantFormErrors => ({
   diseases: [],
 });
 
+const ensureFields = (errors: NewPlantFormErrors) => {
+  if (!errors.fields) {
+    errors.fields = {};
+  }
+  return errors.fields;
+};
+
+const ensureSchedules = (errors: NewPlantFormErrors) => {
+  if (!errors.schedules) {
+    errors.schedules = {};
+  }
+  return errors.schedules;
+};
+
+const ensureDiseases = (errors: NewPlantFormErrors) => {
+  if (!errors.diseases) {
+    errors.diseases = [];
+  }
+  return errors.diseases;
+};
+
 const hasErrors = (errors: NewPlantFormErrors) => {
   const hasFields = errors.fields && Object.keys(errors.fields).length > 0;
   const hasSchedules = errors.schedules && Object.keys(errors.schedules).length > 0;
@@ -72,15 +88,15 @@ const validateValues = (values: NewPlantFormValues): NewPlantFormErrors | null =
 
   const name = values.name.trim();
   if (!name) {
-    errors.fields!.name = "Podaj nazwe rosliny.";
+    ensureFields(errors).name = "Podaj nazwe rosliny.";
   } else if (name.length > 50) {
-    errors.fields!.name = "Maksymalnie 50 znakow.";
+    ensureFields(errors).name = "Maksymalnie 50 znakow.";
   }
 
   const checkMax = (field: keyof NewPlantFormValues, max: number) => {
     const value = values[field];
     if (typeof value === "string" && value.trim().length > max) {
-      errors.fields![field] = `Maksymalnie ${max} znakow.`;
+      ensureFields(errors)[field] = `Maksymalnie ${max} znakow.`;
     }
   };
 
@@ -94,12 +110,12 @@ const validateValues = (values: NewPlantFormValues): NewPlantFormErrors | null =
   checkMax("icon_key", 50);
 
   if (values.color_hex && !COLOR_REGEX.test(values.color_hex.trim())) {
-    errors.fields!.color_hex = "Niepoprawny format koloru.";
+    ensureFields(errors).color_hex = "Niepoprawny format koloru.";
   }
 
   if (values.schedules) {
     values.schedules.forEach((schedule) => {
-      const scheduleErrors = errors.schedules![schedule.season] ?? {};
+      const scheduleErrors = ensureSchedules(errors)[schedule.season] ?? {};
       const { watering_interval, fertilizing_interval } = schedule;
 
       const validateInterval = (value: number, key: "watering_interval" | "fertilizing_interval") => {
@@ -116,7 +132,7 @@ const validateValues = (values: NewPlantFormValues): NewPlantFormErrors | null =
       validateInterval(fertilizing_interval, "fertilizing_interval");
 
       if (Object.keys(scheduleErrors).length > 0) {
-        errors.schedules![schedule.season] = scheduleErrors;
+        ensureSchedules(errors)[schedule.season] = scheduleErrors;
       }
     });
   }
@@ -140,7 +156,7 @@ const validateValues = (values: NewPlantFormValues): NewPlantFormErrors | null =
       }
 
       if (Object.keys(diseaseErrors).length > 0) {
-        errors.diseases![index] = diseaseErrors;
+        ensureDiseases(errors)[index] = diseaseErrors;
       }
     });
   }
@@ -172,8 +188,9 @@ const mapApiValidationErrors = (details: unknown, values: NewPlantFormValues): N
       const scheduleKey = scheduleMatch[2] as "watering_interval" | "fertilizing_interval";
       const season = values.schedules?.[index]?.season;
       if (season) {
-        errors.schedules![season] = {
-          ...errors.schedules![season],
+        const schedules = ensureSchedules(errors);
+        schedules[season] = {
+          ...schedules[season],
           [scheduleKey]: message,
         };
       }
@@ -184,14 +201,15 @@ const mapApiValidationErrors = (details: unknown, values: NewPlantFormValues): N
     if (diseaseMatch) {
       const index = Number(diseaseMatch[1]);
       const diseaseKey = diseaseMatch[2] as "name" | "symptoms" | "advice";
-      errors.diseases![index] = {
-        ...errors.diseases![index],
+      const diseases = ensureDiseases(errors);
+      diseases[index] = {
+        ...diseases[index],
         [diseaseKey]: message,
       };
       return;
     }
 
-    errors.fields![field] = message;
+    ensureFields(errors)[field] = message;
   });
 
   return hasErrors(errors) ? errors : null;

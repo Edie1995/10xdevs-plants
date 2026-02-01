@@ -15,9 +15,7 @@ export const useCareActionsList = (plantId: string, filter: CareActionsFilterVM)
     setError(null);
 
     const params =
-      filter.actionType === "all"
-        ? { limit: filter.limit }
-        : { action_type: filter.actionType, limit: filter.limit };
+      filter.actionType === "all" ? { limit: filter.limit } : { action_type: filter.actionType, limit: filter.limit };
 
     const response = await apiGet<CareActionsListResultDto>(`/api/plants/${plantId}/care-actions`, params);
     setIsLoading(false);

@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import {
-  PLANTS_LIST_QUERY_DEFAULTS,
-  type PlantsListQueryState,
-} from "../../lib/plants/plants-list-viewmodel";
+import { PLANTS_LIST_QUERY_DEFAULTS, type PlantsListQueryState } from "../../lib/plants/plants-list-viewmodel";
 
 type QueryPatch = Partial<PlantsListQueryState> | ((prev: PlantsListQueryState) => PlantsListQueryState);
 

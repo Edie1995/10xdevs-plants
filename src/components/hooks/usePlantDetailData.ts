@@ -11,8 +11,7 @@ interface PlantDetailState {
   notFound: boolean;
 }
 
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export const usePlantDetailData = (plantId: string) => {
   const [state, setState] = useState<PlantDetailState>({
@@ -60,8 +59,7 @@ export const usePlantDetailData = (plantId: string) => {
 
       if (result.error) {
         const authRequired = result.error.httpStatus === 401;
-        const notFound =
-          result.error.httpStatus === 404 || result.error.code === "plant_not_found";
+        const notFound = result.error.httpStatus === 404 || result.error.code === "plant_not_found";
 
         return {
           ...prev,

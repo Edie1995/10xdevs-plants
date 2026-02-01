@@ -5,6 +5,8 @@ import PlantHistoryTab from "../../src/components/plants/PlantHistoryTab";
 import { useCareActionsList } from "../../src/components/hooks/useCareActionsList";
 import { mapCareLogToRow } from "../../src/lib/plants/plant-history-viewmodel";
 import { toast } from "sonner";
+import type { CareLogDto } from "../../src/types";
+import type { CareActionsFilterVM } from "../../src/lib/plants/plant-history-viewmodel";
 
 vi.mock("../../src/components/hooks/useCareActionsList", () => ({
   useCareActionsList: vi.fn(),
@@ -32,7 +34,7 @@ describe("PlantHistoryTab", () => {
       isEmpty: true,
       refetch: vi.fn(),
     });
-    mapCareLogToRowMock.mockImplementation((row: any) => ({
+    mapCareLogToRowMock.mockImplementation((row: CareLogDto) => ({
       id: row.id,
       actionTypeLabel: "Podlewanie",
       performedAtDisplay: "Dzis",
@@ -51,9 +53,17 @@ describe("PlantHistoryTab", () => {
     render(
       <PlantHistoryTab
         plantId="plant-1"
-        recentFromDetail={[{ id: "log-1", action_type: "watering", performed_at: "2025-01-01" } as any]}
+        recentFromDetail={[
+          {
+            id: "log-1",
+            action_type: "watering",
+            performed_at: "2025-01-01",
+            created_at: "2025-01-01",
+            updated_at: "2025-01-01",
+          },
+        ]}
         onApiError={vi.fn()}
-      />,
+      />
     );
 
     await waitFor(() => {
@@ -85,7 +95,7 @@ describe("PlantHistoryTab", () => {
   });
 
   it("updates filter when selecting action type", () => {
-    const calls: Array<{ plantId: string; filter: any }> = [];
+    const calls: { plantId: string; filter: CareActionsFilterVM }[] = [];
     useCareActionsListMock.mockImplementation((plantId, filter) => {
       calls.push({ plantId, filter });
       return {

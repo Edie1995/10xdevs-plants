@@ -1,10 +1,10 @@
 import { Button } from "../ui/button";
 
-type PaginationProps = {
+interface PaginationProps {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-};
+}
 
 export default function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
   if (totalPages <= 1) {

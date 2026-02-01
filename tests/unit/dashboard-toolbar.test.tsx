@@ -1,16 +1,21 @@
 import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import type React from "react";
 
 import type { DashboardQueryState } from "../../src/lib/dashboard/dashboard-viewmodel";
 import DashboardToolbar from "../../src/components/dashboard/DashboardToolbar";
 
-vi.mock("../../src/components/ui/select", () => {
-  const React = require("react");
-  const SelectContext = React.createContext(() => {});
+vi.mock("../../src/components/ui/select", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  const SelectContext = React.createContext(() => undefined);
 
-  const Select = ({ onValueChange, children }: { onValueChange: (value: string) => void; children: React.ReactNode }) => (
-    <SelectContext.Provider value={onValueChange}>{children}</SelectContext.Provider>
-  );
+  const Select = ({
+    onValueChange,
+    children,
+  }: {
+    onValueChange: (value: string) => void;
+    children: React.ReactNode;
+  }) => <SelectContext.Provider value={onValueChange}>{children}</SelectContext.Provider>;
 
   const SelectItem = ({ value, children }: { value: string; children: React.ReactNode }) => {
     const onValueChange = React.useContext(SelectContext);
@@ -40,14 +45,7 @@ const buildQuery = (overrides: Partial<DashboardQueryState> = {}): DashboardQuer
 describe("DashboardToolbar", () => {
   it("submits trimmed search value", () => {
     const onSubmit = vi.fn();
-    render(
-      <DashboardToolbar
-        query={buildQuery()}
-        onChange={vi.fn()}
-        onSubmit={onSubmit}
-        onClear={vi.fn()}
-      />
-    );
+    render(<DashboardToolbar query={buildQuery()} onChange={vi.fn()} onSubmit={onSubmit} onClear={vi.fn()} />);
 
     fireEvent.change(screen.getByLabelText("Szukaj"), { target: { value: "  Kaktus  " } });
     fireEvent.click(screen.getByRole("button", { name: "Szukaj" }));
@@ -57,14 +55,7 @@ describe("DashboardToolbar", () => {
 
   it("blocks submit when search is longer than 50 characters", () => {
     const onSubmit = vi.fn();
-    render(
-      <DashboardToolbar
-        query={buildQuery()}
-        onChange={vi.fn()}
-        onSubmit={onSubmit}
-        onClear={vi.fn()}
-      />
-    );
+    render(<DashboardToolbar query={buildQuery()} onChange={vi.fn()} onSubmit={onSubmit} onClear={vi.fn()} />);
 
     fireEvent.change(screen.getByLabelText("Szukaj"), { target: { value: "x".repeat(51) } });
     fireEvent.click(screen.getByRole("button", { name: "Szukaj" }));
@@ -75,14 +66,7 @@ describe("DashboardToolbar", () => {
 
   it("clears search input and error on clear", () => {
     const onClear = vi.fn();
-    render(
-      <DashboardToolbar
-        query={buildQuery()}
-        onChange={vi.fn()}
-        onSubmit={vi.fn()}
-        onClear={onClear}
-      />
-    );
+    render(<DashboardToolbar query={buildQuery()} onChange={vi.fn()} onSubmit={vi.fn()} onClear={onClear} />);
 
     fireEvent.change(screen.getByLabelText("Szukaj"), { target: { value: "x".repeat(51) } });
     fireEvent.click(screen.getByRole("button", { name: "Szukaj" }));
@@ -119,14 +103,7 @@ describe("DashboardToolbar", () => {
 
   it("calls onChange when sort or direction changes", () => {
     const onChange = vi.fn();
-    render(
-      <DashboardToolbar
-        query={buildQuery()}
-        onChange={onChange}
-        onSubmit={vi.fn()}
-        onClear={vi.fn()}
-      />
-    );
+    render(<DashboardToolbar query={buildQuery()} onChange={onChange} onSubmit={vi.fn()} onClear={vi.fn()} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Nazwa" }));
     fireEvent.click(screen.getByRole("button", { name: "Malejaco" }));

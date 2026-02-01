@@ -105,9 +105,7 @@ describe("DashboardView", () => {
     render(<DashboardView initialUrl="http://example.test/app" />);
 
     await waitFor(() => {
-      expect(window.location.href).toBe(
-        "/auth/login?redirectTo=http%3A%2F%2Fexample.test%2Fapp"
-      );
+      expect(window.location.href).toBe("/auth/login?redirectTo=http%3A%2F%2Fexample.test%2Fapp");
     });
   });
 

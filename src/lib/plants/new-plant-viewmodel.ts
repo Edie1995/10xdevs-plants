@@ -1,7 +1,7 @@
 import type { ApiErrorViewModel } from "../api/api-client";
 import type { DiseaseCommand, DifficultyLevel, PlantCardDetailDto, SeasonalScheduleCommand, Season } from "../../types";
 
-export type NewPlantFormValues = {
+export interface NewPlantFormValues {
   name: string;
   soil?: string;
   pot?: string;
@@ -15,23 +15,23 @@ export type NewPlantFormValues = {
   color_hex?: string;
   schedules?: SeasonalScheduleCommand[];
   diseases?: DiseaseCommand[];
-};
+}
 
-export type NewPlantFormErrors = {
+export interface NewPlantFormErrors {
   form?: string;
   fields?: Record<string, string>;
   schedules?: Record<Season, { watering_interval?: string; fertilizing_interval?: string }>;
-  diseases?: Array<{ name?: string; symptoms?: string; advice?: string }>;
-};
+  diseases?: { name?: string; symptoms?: string; advice?: string }[];
+}
 
-export type CreatePlantResult = {
+export interface CreatePlantResult {
   data: PlantCardDetailDto | null;
   error: ApiErrorViewModel | null;
-};
+}
 
-export type PlantIconOption = {
+export interface PlantIconOption {
   key: string;
   label: string;
   src?: string;
   previewClass?: string;
-};
+}

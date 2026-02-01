@@ -7,10 +7,10 @@ import { Input } from "../ui/input";
 import { apiPost } from "../../lib/api/api-client";
 import AuthFormShell from "./AuthFormShell";
 
-type ResetPasswordErrors = {
+interface ResetPasswordErrors {
   password?: string;
   confirmPassword?: string;
-};
+}
 
 const MIN_PASSWORD_LENGTH = 8;
 

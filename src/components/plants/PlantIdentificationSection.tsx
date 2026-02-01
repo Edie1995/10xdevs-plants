@@ -43,7 +43,7 @@ export default function PlantIdentificationSection({ values, errors, onChange }:
       </div>
       <div className="grid gap-6 md:grid-cols-[1.2fr_1fr]">
         <div className="space-y-3">
-          <label className="text-sm font-medium text-neutral-700">Ikona</label>
+          <span className="text-sm font-medium text-neutral-700">Ikona</span>
           <div className="grid grid-cols-5 gap-3 sm:grid-cols-6">
             {iconOptions.map((option) => {
               const isActive = values.icon_key === option.key;

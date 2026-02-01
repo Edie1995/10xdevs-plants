@@ -25,33 +25,36 @@ const readTabFromLocation = (fallback: PlantTabKey) => {
 export const usePlantTabState = (fallbackTab: PlantTabKey = DEFAULT_TAB) => {
   const [tab, setTabState] = useState<PlantTabKey>(() => readTabFromLocation(fallbackTab));
 
-  const setTab = useCallback((next: PlantTabKey, options?: { replace?: boolean }) => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    setTabState(() => {
-      const normalized = normalizeTab(next, fallbackTab);
-      const params = new URLSearchParams(window.location.search);
-
-      if (normalized === DEFAULT_TAB) {
-        params.delete("tab");
-      } else {
-        params.set("tab", normalized);
+  const setTab = useCallback(
+    (next: PlantTabKey, options?: { replace?: boolean }) => {
+      if (typeof window === "undefined") {
+        return;
       }
 
-      const url = new URL(window.location.href);
-      url.search = params.toString();
+      setTabState(() => {
+        const normalized = normalizeTab(next, fallbackTab);
+        const params = new URLSearchParams(window.location.search);
 
-      if (options?.replace) {
-        window.history.replaceState(null, "", url.toString());
-      } else {
-        window.history.pushState(null, "", url.toString());
-      }
+        if (normalized === DEFAULT_TAB) {
+          params.delete("tab");
+        } else {
+          params.set("tab", normalized);
+        }
 
-      return normalized;
-    });
-  }, []);
+        const url = new URL(window.location.href);
+        url.search = params.toString();
+
+        if (options?.replace) {
+          window.history.replaceState(null, "", url.toString());
+        } else {
+          window.history.pushState(null, "", url.toString());
+        }
+
+        return normalized;
+      });
+    },
+    [fallbackTab]
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") {

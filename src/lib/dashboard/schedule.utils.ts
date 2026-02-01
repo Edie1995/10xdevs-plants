@@ -1,10 +1,7 @@
 import type { SeasonalScheduleDto } from "../../types";
 import { getSeasonForDate, toUtcDateOnly } from "../services/care-schedule.utils";
 
-export const isFertilizingDisabledForDate = (
-  schedules: SeasonalScheduleDto[] | undefined,
-  date: Date,
-) => {
+export const isFertilizingDisabledForDate = (schedules: SeasonalScheduleDto[] | undefined, date: Date) => {
   if (!schedules || schedules.length === 0) {
     return false;
   }

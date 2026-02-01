@@ -13,7 +13,7 @@ describe("SeasonScheduleRow", () => {
         seasonLabel="Wiosna"
         value={{ season: "spring", watering_interval: 0, fertilizing_interval: 0 }}
         onChange={onChange}
-      />,
+      />
     );
 
     fireEvent.change(screen.getByLabelText("Podlewanie (dni)"), { target: { value: "12a" } });

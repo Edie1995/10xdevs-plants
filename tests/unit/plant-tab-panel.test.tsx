@@ -63,7 +63,7 @@ describe("PlantTabPanel", () => {
         setScheduleState={vi.fn()}
         basicEditMode={false}
         setBasicEditMode={vi.fn()}
-      />,
+      />
     );
 
     expect(container.querySelectorAll(".animate-pulse").length).toBeGreaterThan(0);
@@ -83,7 +83,7 @@ describe("PlantTabPanel", () => {
         setScheduleState={vi.fn()}
         basicEditMode={false}
         setBasicEditMode={vi.fn()}
-      />,
+      />
     );
 
     expect(container.firstChild).toBeNull();
@@ -108,7 +108,7 @@ describe("PlantTabPanel", () => {
         setScheduleState={vi.fn()}
         basicEditMode
         setBasicEditMode={onEditModeChange}
-      />,
+      />
     );
 
     const props = PlantBasicTabMock.mock.calls[0]?.[0];
@@ -142,7 +142,7 @@ describe("PlantTabPanel", () => {
         setScheduleState={setScheduleState}
         basicEditMode={false}
         setBasicEditMode={vi.fn()}
-      />,
+      />
     );
 
     const props = PlantScheduleTabMock.mock.calls[0]?.[0];
@@ -174,7 +174,7 @@ describe("PlantTabPanel", () => {
         setScheduleState={vi.fn()}
         basicEditMode={false}
         setBasicEditMode={vi.fn()}
-      />,
+      />
     );
 
     const props = PlantDiseasesTabMock.mock.calls[0]?.[0];
@@ -186,7 +186,9 @@ describe("PlantTabPanel", () => {
   });
 
   it("renders the history tab with expected props", () => {
-    const recentLogs = [{ id: "log-1", action_type: "watering", performed_at: "2025-01-01" }] as PlantCardDetailDto["recent_care_logs"];
+    const recentLogs = [
+      { id: "log-1", action_type: "watering", performed_at: "2025-01-01" },
+    ] as PlantCardDetailDto["recent_care_logs"];
     const plantDetail = buildPlantDetail({ recent_care_logs: recentLogs });
     const onApiError = vi.fn();
 
@@ -203,7 +205,7 @@ describe("PlantTabPanel", () => {
         setScheduleState={vi.fn()}
         basicEditMode={false}
         setBasicEditMode={vi.fn()}
-      />,
+      />
     );
 
     const props = PlantHistoryTabMock.mock.calls[0]?.[0];

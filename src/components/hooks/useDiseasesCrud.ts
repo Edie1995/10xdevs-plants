@@ -10,7 +10,6 @@ import {
   mapDraftToCreateCommand,
   mapDraftToUpdateCommand,
   type DiseaseDraftVM,
-  type DiseaseErrorsVM,
   type DiseaseItemVM,
   validateDiseaseDraft,
 } from "../../lib/plants/plant-diseases-viewmodel";
@@ -31,7 +30,7 @@ const buildItem = (disease: DiseaseDto): DiseaseItemVM => ({
 export const useDiseasesCrud = (
   plantId: string,
   initialDiseases: DiseaseDto[],
-  onApiError?: (error: ApiErrorViewModel) => void,
+  onApiError?: (error: ApiErrorViewModel) => void
 ) => {
   const [items, setItems] = useState<DiseaseItemVM[]>(() => initialDiseases.map(buildItem));
   const timersRef = useRef<Map<string, number>>(new Map());
@@ -41,9 +40,10 @@ export const useDiseasesCrud = (
   }, [initialDiseases]);
 
   useEffect(() => {
+    const timers = timersRef.current;
     return () => {
-      timersRef.current.forEach((timer) => window.clearTimeout(timer));
-      timersRef.current.clear();
+      timers.forEach((timer) => window.clearTimeout(timer));
+      timers.clear();
     };
   }, []);
 
@@ -58,10 +58,7 @@ export const useDiseasesCrud = (
         return { data: null, error: null, validation };
       }
 
-      const response = await apiPost<DiseaseDto>(
-        `/api/plants/${plantId}/diseases`,
-        mapDraftToCreateCommand(draft),
-      );
+      const response = await apiPost<DiseaseDto>(`/api/plants/${plantId}/diseases`, mapDraftToCreateCommand(draft));
 
       if (response.error) {
         if (response.error.httpStatus === 400 && response.error.code === "validation_error") {
@@ -83,7 +80,7 @@ export const useDiseasesCrud = (
 
       return { data: response.data, error: null, validation: null };
     },
-    [onApiError, plantId],
+    [onApiError, plantId]
   );
 
   const startEdit = useCallback((id: string) => {
@@ -97,8 +94,8 @@ export const useDiseasesCrud = (
               errors: null,
               isOpen: true,
             }
-          : item,
-      ),
+          : item
+      )
     );
   }, []);
 
@@ -112,26 +109,23 @@ export const useDiseasesCrud = (
               draft: mapDiseaseToDraft(item.data),
               errors: null,
             }
-          : item,
-      ),
+          : item
+      )
     );
   }, []);
 
-  const updateDraft = useCallback(
-    (id: string, patch: Partial<DiseaseDraftVM>) => {
-      setItems((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                draft: { ...item.draft, ...patch },
-              }
-            : item,
-        ),
-      );
-    },
-    [],
-  );
+  const updateDraft = useCallback((id: string, patch: Partial<DiseaseDraftVM>) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              draft: { ...item.draft, ...patch },
+            }
+          : item
+      )
+    );
+  }, []);
 
   const save = useCallback(
     async (id: string) => {
@@ -149,7 +143,7 @@ export const useDiseasesCrud = (
       setItem(id, { isSaving: true });
       const response = await apiPut<DiseaseDto>(
         `/api/plants/${plantId}/diseases/${id}`,
-        mapDraftToUpdateCommand(current.draft),
+        mapDraftToUpdateCommand(current.draft)
       );
       setItem(id, { isSaving: false });
 
@@ -175,14 +169,14 @@ export const useDiseasesCrud = (
                   draft: mapDiseaseToDraft(response.data),
                   errors: null,
                 }
-              : item,
-          ),
+              : item
+          )
         );
       }
 
       return { data: response.data, error: null, validation: null };
     },
-    [items, onApiError, plantId, setItem],
+    [items, onApiError, plantId, setItem]
   );
 
   const requestDelete = useCallback(
@@ -211,14 +205,14 @@ export const useDiseasesCrud = (
       }, confirmWindowMs);
       timersRef.current.set(id, timeout);
     },
-    [items, onApiError, plantId, setItem],
+    [items, onApiError, plantId, setItem]
   );
 
   const toggleOpen = useCallback(
     (id: string, next: boolean) => {
       setItem(id, { isOpen: next });
     },
-    [setItem],
+    [setItem]
   );
 
   const hasItems = useMemo(() => items.length > 0, [items.length]);

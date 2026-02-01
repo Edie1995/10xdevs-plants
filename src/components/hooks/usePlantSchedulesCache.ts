@@ -14,8 +14,7 @@ const notify = () => {
   });
 };
 
-const getCached = (plantId: string): PlantScheduleStateVM =>
-  scheduleCache.get(plantId) ?? { status: "unknown" };
+const getCached = (plantId: string): PlantScheduleStateVM => scheduleCache.get(plantId) ?? { status: "unknown" };
 
 const setCached = (plantId: string, next: PlantScheduleStateVM) => {
   scheduleCache.set(plantId, next);
@@ -30,9 +29,7 @@ const isCacheFresh = (state: PlantScheduleStateVM) => {
   return Date.now() - state.lastCheckedAt < CACHE_TTL_MS;
 };
 
-const mapScheduleResponse = (
-  data: SeasonalScheduleDto[] | null,
-): PlantScheduleStateVM => {
+const mapScheduleResponse = (data: SeasonalScheduleDto[] | null): PlantScheduleStateVM => {
   if (!data || data.length === 0) {
     return {
       status: "missing",

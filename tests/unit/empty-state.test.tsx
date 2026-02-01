@@ -22,9 +22,7 @@ describe("EmptyState", () => {
   });
 
   it("renders link action when href is provided", () => {
-    render(
-      <EmptyState title="Brak danych" primaryAction={{ label: "Przejdz", href: "/app/plants/new" }} />
-    );
+    render(<EmptyState title="Brak danych" primaryAction={{ label: "Przejdz", href: "/app/plants/new" }} />);
 
     const link = screen.getByRole("link", { name: "Przejdz" });
     expect(link).toHaveAttribute("href", "/app/plants/new");

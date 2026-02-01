@@ -2,14 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 
 import type { PlantScheduleStateVM } from "../../lib/dashboard/dashboard-viewmodel";
 import type { Season } from "../../types";
-import {
-  buildScheduleEditor,
-  type PlantScheduleEditorVM,
-} from "../../lib/plants/plant-schedule-viewmodel";
+import { buildScheduleEditor, type PlantScheduleEditorVM } from "../../lib/plants/plant-schedule-viewmodel";
 
 export const usePlantScheduleEditor = (
   scheduleState: PlantScheduleStateVM,
-  loadSchedule: () => Promise<PlantScheduleStateVM>,
+  loadSchedule: () => Promise<PlantScheduleStateVM>
 ) => {
   const [editor, setEditor] = useState<PlantScheduleEditorVM>(() => buildScheduleEditor(scheduleState.schedules));
   const [isLoading, setIsLoading] = useState(false);
@@ -33,22 +30,25 @@ export const usePlantScheduleEditor = (
     return next;
   }, [loadSchedule, scheduleState]);
 
-  const setSeasonPatch = useCallback((season: Season, patch: Partial<{ watering_interval: number; fertilizing_interval: number }>) => {
-    setEditor((prev) => {
-      const next = prev ?? buildScheduleEditor(scheduleState.schedules);
-      return {
-        values: {
-          ...next.values,
-          [season]: {
-            ...next.values[season],
-            ...patch,
-            season,
+  const setSeasonPatch = useCallback(
+    (season: Season, patch: Partial<{ watering_interval: number; fertilizing_interval: number }>) => {
+      setEditor((prev) => {
+        const next = prev ?? buildScheduleEditor(scheduleState.schedules);
+        return {
+          values: {
+            ...next.values,
+            [season]: {
+              ...next.values[season],
+              ...patch,
+              season,
+            },
           },
-        },
-        dirty: true,
-      };
-    });
-  }, [scheduleState.schedules]);
+          dirty: true,
+        };
+      });
+    },
+    [scheduleState.schedules]
+  );
 
   const reset = useCallback(() => {
     setEditor(buildScheduleEditor(scheduleState.schedules));

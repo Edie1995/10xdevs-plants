@@ -7,9 +7,9 @@ import { Input } from "../ui/input";
 import { apiPost } from "../../lib/api/api-client";
 import AuthFormShell from "./AuthFormShell";
 
-type ForgotPasswordErrors = {
+interface ForgotPasswordErrors {
   email?: string;
-};
+}
 
 const isValidEmail = (value: string) => /^\S+@\S+\.\S+$/.test(value);
 

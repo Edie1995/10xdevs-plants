@@ -12,11 +12,11 @@ interface RegisterFormProps {
   initialEmail?: string;
 }
 
-type RegisterErrors = {
+interface RegisterErrors {
   email?: string;
   password?: string;
   confirmPassword?: string;
-};
+}
 
 const MIN_PASSWORD_LENGTH = 8;
 const isValidEmail = (value: string) => /^\S+@\S+\.\S+$/.test(value);
@@ -51,6 +51,7 @@ export default function RegisterForm({ redirectTo, initialEmail }: RegisterFormP
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmationSent, setConfirmationSent] = useState(false);
+  const safeRedirectTo = sanitizeRedirectPath(redirectTo);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -91,7 +92,7 @@ export default function RegisterForm({ redirectTo, initialEmail }: RegisterFormP
       email: trimmedEmail,
       password,
       confirmPassword,
-      redirectTo,
+      redirectTo: safeRedirectTo,
     });
     setIsSubmitting(false);
 
@@ -120,7 +121,7 @@ export default function RegisterForm({ redirectTo, initialEmail }: RegisterFormP
       }
     >
       <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-        {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
+        {safeRedirectTo ? <input type="hidden" name="redirectTo" value={safeRedirectTo} /> : null}
         {formError ? (
           <p className="text-sm text-red-600" role="alert">
             {formError}

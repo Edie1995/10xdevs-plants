@@ -5,7 +5,7 @@ import PlantCard from "../plants/PlantCard";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import DashboardToolbar from "./DashboardToolbar";
 
-type EmptyStateConfig = {
+interface EmptyStateConfig {
   title: string;
   description?: string;
   primaryAction: {
@@ -13,9 +13,9 @@ type EmptyStateConfig = {
     href?: string;
     onClick?: () => void;
   };
-};
+}
 
-type AllPlantsSectionProps = {
+interface AllPlantsSectionProps {
   items: PlantCardVM[];
   pagination: PaginationVM;
   query: DashboardQueryState;
@@ -23,7 +23,7 @@ type AllPlantsSectionProps = {
   isLoading?: boolean;
   onQueryChange: (next: DashboardQueryState) => void;
   onCareActionCompleted: () => void;
-};
+}
 
 const buildSkeletons = (count: number) =>
   Array.from({ length: count }, (_, index) => (

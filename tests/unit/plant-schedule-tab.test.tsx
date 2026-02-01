@@ -88,7 +88,7 @@ describe("PlantScheduleTab", () => {
         setScheduleState={vi.fn()}
         onSaved={vi.fn()}
         onApiError={vi.fn()}
-      />,
+      />
     );
 
     expect(screen.getByText("Oops")).toBeInTheDocument();
@@ -115,7 +115,7 @@ describe("PlantScheduleTab", () => {
         setScheduleState={vi.fn()}
         onSaved={vi.fn()}
         onApiError={vi.fn()}
-      />,
+      />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Edytuj" }));
@@ -136,7 +136,7 @@ describe("PlantScheduleTab", () => {
         setScheduleState={vi.fn()}
         onSaved={vi.fn()}
         onApiError={vi.fn()}
-      />,
+      />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Edytuj" }));
@@ -173,7 +173,7 @@ describe("PlantScheduleTab", () => {
         setScheduleState={setScheduleState}
         onSaved={onSaved}
         onApiError={vi.fn()}
-      />,
+      />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Edytuj" }));
@@ -187,7 +187,7 @@ describe("PlantScheduleTab", () => {
           status: "ready",
           schedules: expect.any(Array),
           lastCheckedAt: expect.any(Number),
-        }),
+        })
       );
       expect(onSaved).toHaveBeenCalled();
       expect(toast.success).toHaveBeenCalledWith("Harmonogram zapisany.");

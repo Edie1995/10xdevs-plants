@@ -1,22 +1,22 @@
 import type { DiseaseCommand, DiseaseDto, DiseaseUpdateCommand } from "../../types";
 
-export type DiseaseDraftVM = {
+export interface DiseaseDraftVM {
   name: string;
   symptoms: string | null;
   advice: string | null;
-};
+}
 
-export type DiseaseErrorsVM = {
+export interface DiseaseErrorsVM {
   fields?: { name?: string; symptoms?: string; advice?: string };
   form?: string;
-};
+}
 
-export type InlineConfirmStateVM = {
+export interface InlineConfirmStateVM {
   armedAt: number | null;
   expiresAt: number | null;
-};
+}
 
-export type DiseaseItemVM = {
+export interface DiseaseItemVM {
   id: string;
   data: DiseaseDto;
   isOpen: boolean;
@@ -25,7 +25,7 @@ export type DiseaseItemVM = {
   errors: DiseaseErrorsVM | null;
   isSaving: boolean;
   deleteConfirm: InlineConfirmStateVM;
-};
+}
 
 const normalizeOptionalString = (value: string | null | undefined) => {
   const trimmed = value?.trim();
@@ -52,19 +52,21 @@ export const mapDraftToUpdateCommand = (draft: DiseaseDraftVM): DiseaseUpdateCom
 
 export const validateDiseaseDraft = (draft: DiseaseDraftVM): DiseaseErrorsVM | null => {
   const errors: DiseaseErrorsVM = { fields: {} };
+  const fields = errors.fields ?? {};
+  errors.fields = fields;
 
   const name = draft.name.trim();
   if (!name) {
-    errors.fields!.name = "Podaj nazwe choroby.";
+    fields.name = "Podaj nazwe choroby.";
   } else if (name.length > 50) {
-    errors.fields!.name = "Maksymalnie 50 znakow.";
+    fields.name = "Maksymalnie 50 znakow.";
   }
 
   if (draft.symptoms && draft.symptoms.trim().length > 2000) {
-    errors.fields!.symptoms = "Maksymalnie 2000 znakow.";
+    fields.symptoms = "Maksymalnie 2000 znakow.";
   }
   if (draft.advice && draft.advice.trim().length > 2000) {
-    errors.fields!.advice = "Maksymalnie 2000 znakow.";
+    fields.advice = "Maksymalnie 2000 znakow.";
   }
 
   const hasErrors = Boolean(errors.form) || Object.keys(errors.fields ?? {}).length > 0;
@@ -78,6 +80,8 @@ export const mapDiseaseApiErrors = (details: unknown): DiseaseErrorsVM | null =>
   }
 
   const errors: DiseaseErrorsVM = { fields: {} };
+  const fields = errors.fields ?? {};
+  errors.fields = fields;
 
   if (payload.formErrors && payload.formErrors.length > 0) {
     errors.form = payload.formErrors[0];
@@ -89,7 +93,7 @@ export const mapDiseaseApiErrors = (details: unknown): DiseaseErrorsVM | null =>
       return;
     }
     if (field === "name" || field === "symptoms" || field === "advice") {
-      errors.fields![field] = message;
+      fields[field] = message;
     }
   });
 

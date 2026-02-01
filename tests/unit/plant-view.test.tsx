@@ -4,6 +4,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { PlantCardDetailDto } from "../../src/types";
 import type { ApiErrorViewModel } from "../../src/lib/api/api-client";
 import type { PlantScheduleStateVM } from "../../src/lib/dashboard/dashboard-viewmodel";
+import type React from "react";
 import PlantView from "../../src/components/plants/PlantView";
 import { usePlantDetailData } from "../../src/components/hooks/usePlantDetailData";
 import { usePlantTabState } from "../../src/components/hooks/usePlantTabState";
@@ -11,8 +12,13 @@ import { usePlantSchedulesCache } from "../../src/components/hooks/usePlantSched
 import { mapPlantDetailToHeader } from "../../src/lib/plants/plant-viewmodel";
 import { toast } from "sonner";
 
-const headerPropsRef = vi.hoisted(() => ({ current: null as any }));
-const deleteDialogPropsRef = vi.hoisted(() => ({ current: null as any }));
+type PlantHeaderProps = React.ComponentProps<typeof import("../../src/components/plants/PlantHeader").default>;
+type ConfirmDeleteDialogProps = React.ComponentProps<
+  typeof import("../../src/components/plants/ConfirmDeletePlantDialog").default
+>;
+
+const headerPropsRef = vi.hoisted(() => ({ current: null as PlantHeaderProps | null }));
+const deleteDialogPropsRef = vi.hoisted(() => ({ current: null as ConfirmDeleteDialogProps | null }));
 
 vi.mock("../../src/components/hooks/usePlantDetailData", () => ({
   usePlantDetailData: vi.fn(),
@@ -31,7 +37,7 @@ vi.mock("../../src/lib/plants/plant-viewmodel", () => ({
 }));
 
 vi.mock("../../src/components/plants/PlantHeader", () => ({
-  default: (props: any) => {
+  default: (props: PlantHeaderProps) => {
     headerPropsRef.current = props;
     return <div data-testid="PlantHeader" />;
   },
@@ -50,7 +56,7 @@ vi.mock("../../src/components/plants/PlantBackLink", () => ({
 }));
 
 vi.mock("../../src/components/plants/ConfirmDeletePlantDialog", () => ({
-  default: (props: any) => {
+  default: (props: ConfirmDeleteDialogProps) => {
     deleteDialogPropsRef.current = props;
     return (
       <button type="button" onClick={() => props.onDeleted()}>
@@ -105,7 +111,7 @@ describe("PlantView", () => {
 
     usePlantTabStateMock.mockReturnValue({ tab: "basic", setTab: vi.fn() });
     usePlantSchedulesCacheMock.mockReturnValue({
-      getState: vi.fn(() => ({ status: "ready", schedules: [] } as PlantScheduleStateVM)),
+      getState: vi.fn(() => ({ status: "ready", schedules: [] }) as PlantScheduleStateVM),
       getOrLoad: vi.fn().mockResolvedValue({ status: "ready", schedules: [] }),
       setState: vi.fn(),
     });
@@ -166,7 +172,7 @@ describe("PlantView", () => {
 
     await waitFor(() => {
       expect(window.location.href).toBe(
-        "/auth/login?redirectTo=http%3A%2F%2Flocalhost%2Fapp%2Fplants%2Fplant-1%3Ftab%3Dbasic",
+        "/auth/login?redirectTo=http%3A%2F%2Flocalhost%2Fapp%2Fplants%2Fplant-1%3Ftab%3Dbasic"
       );
     });
   });
@@ -199,7 +205,7 @@ describe("PlantView", () => {
   it("marks schedule state as missing when schedule is missing", () => {
     const setState = vi.fn();
     usePlantSchedulesCacheMock.mockReturnValue({
-      getState: vi.fn(() => ({ status: "ready", schedules: [] } as PlantScheduleStateVM)),
+      getState: vi.fn(() => ({ status: "ready", schedules: [] }) as PlantScheduleStateVM),
       getOrLoad: vi.fn(),
       setState,
     });
@@ -220,7 +226,7 @@ describe("PlantView", () => {
         status: "missing",
         error,
         lastCheckedAt: expect.any(Number),
-      }),
+      })
     );
   });
 
@@ -254,7 +260,7 @@ describe("PlantView", () => {
         schedules: [],
         error,
         lastCheckedAt: expect.any(Number),
-      }),
+      })
     );
   });
 
@@ -264,7 +270,7 @@ describe("PlantView", () => {
         plantId="plant-1"
         initialUrl="http://localhost/app/plants/plant-1"
         returnTo="https://example.com/evil"
-      />,
+      />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "ConfirmDelete" }));

@@ -36,7 +36,7 @@ const difficultyLabels: Record<NonNullable<PlantCardDetailDto["difficulty"]>, st
 };
 
 const getDisplayValue = (value: string | null | undefined) => (value && value.trim().length > 0 ? value : "—");
-const fieldOrder: Array<keyof NonNullable<PlantBasicErrorsVM["fields"]>> = [
+const fieldOrder: (keyof NonNullable<PlantBasicErrorsVM["fields"]>)[] = [
   "name",
   "difficulty",
   "soil",

@@ -1,15 +1,15 @@
 import type { ApiErrorViewModel } from "../api/api-client";
 import type { Season, SeasonalScheduleCommand, SeasonalScheduleDto, UpdateSchedulesCommand } from "../../types";
 
-export type PlantScheduleEditorVM = {
+export interface PlantScheduleEditorVM {
   values: Record<Season, SeasonalScheduleCommand>;
   dirty: boolean;
-};
+}
 
-export type ScheduleErrorsVM = {
+export interface ScheduleErrorsVM {
   form?: string;
   seasons?: Record<Season, { watering_interval?: string; fertilizing_interval?: string }>;
-};
+}
 
 const seasons: Season[] = ["spring", "summer", "autumn", "winter"];
 
@@ -26,13 +26,16 @@ const toCommand = (schedule: SeasonalScheduleDto | SeasonalScheduleCommand): Sea
 });
 
 export const buildScheduleEditor = (
-  schedules: SeasonalScheduleDto[] | SeasonalScheduleCommand[] | undefined,
+  schedules: SeasonalScheduleDto[] | SeasonalScheduleCommand[] | undefined
 ): PlantScheduleEditorVM => {
-  const values = seasons.reduce((acc, season) => {
-    const schedule = schedules?.find((item) => item.season === season);
-    acc[season] = schedule ? toCommand(schedule) : emptySchedule(season);
-    return acc;
-  }, {} as Record<Season, SeasonalScheduleCommand>);
+  const values = seasons.reduce(
+    (acc, season) => {
+      const schedule = schedules?.find((item) => item.season === season);
+      acc[season] = schedule ? toCommand(schedule) : emptySchedule(season);
+      return acc;
+    },
+    {} as Record<Season, SeasonalScheduleCommand>
+  );
 
   return { values, dirty: false };
 };
@@ -43,8 +46,10 @@ export const buildUpdateSchedulesCommand = (editor: PlantScheduleEditorVM): Upda
 
 export const validateScheduleEditor = (editor: PlantScheduleEditorVM): ScheduleErrorsVM | null => {
   const errors: ScheduleErrorsVM = { seasons: {} };
+  const seasonsErrors = errors.seasons ?? {};
+  errors.seasons = seasonsErrors;
 
-  const validateInterval = (value: number, key: "watering_interval" | "fertilizing_interval") => {
+  const validateInterval = (value: number) => {
     if (!Number.isInteger(value)) {
       return "Wpisz liczbe calkowita.";
     }
@@ -58,36 +63,35 @@ export const validateScheduleEditor = (editor: PlantScheduleEditorVM): ScheduleE
     const entry = editor.values[season] ?? emptySchedule(season);
     const seasonErrors: { watering_interval?: string; fertilizing_interval?: string } = {};
 
-    const wateringError = validateInterval(entry.watering_interval, "watering_interval");
+    const wateringError = validateInterval(entry.watering_interval);
     if (wateringError) {
       seasonErrors.watering_interval = wateringError;
     }
 
-    const fertilizingError = validateInterval(entry.fertilizing_interval, "fertilizing_interval");
+    const fertilizingError = validateInterval(entry.fertilizing_interval);
     if (fertilizingError) {
       seasonErrors.fertilizing_interval = fertilizingError;
     }
 
     if (Object.keys(seasonErrors).length > 0) {
-      errors.seasons![season] = seasonErrors;
+      seasonsErrors[season] = seasonErrors;
     }
   });
 
-  const hasErrors =
-    Boolean(errors.form) || Object.keys(errors.seasons ?? {}).length > 0;
+  const hasErrors = Boolean(errors.form) || Object.keys(errors.seasons ?? {}).length > 0;
 
   return hasErrors ? errors : null;
 };
 
-export const mapScheduleApiErrors = (
-  error: ApiErrorViewModel,
-): ScheduleErrorsVM | null => {
+export const mapScheduleApiErrors = (error: ApiErrorViewModel): ScheduleErrorsVM | null => {
   const payload = error.details as { fieldErrors?: Record<string, string[]>; formErrors?: string[] } | null;
   if (!payload) {
     return null;
   }
 
   const errors: ScheduleErrorsVM = { seasons: {} };
+  const seasonsErrors = errors.seasons ?? {};
+  errors.seasons = seasonsErrors;
 
   if (payload.formErrors && payload.formErrors.length > 0) {
     errors.form = payload.formErrors[0];
@@ -111,14 +115,13 @@ export const mapScheduleApiErrors = (
       return;
     }
 
-    errors.seasons![season] = {
-      ...errors.seasons![season],
+    seasonsErrors[season] = {
+      ...seasonsErrors[season],
       [key]: message,
     };
   });
 
-  const hasErrors =
-    Boolean(errors.form) || Object.keys(errors.seasons ?? {}).length > 0;
+  const hasErrors = Boolean(errors.form) || Object.keys(errors.seasons ?? {}).length > 0;
   return hasErrors ? errors : null;
 };
 
