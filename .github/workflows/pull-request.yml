@@ -40,6 +40,8 @@ jobs:
     permissions:
       contents: read
     env:
+      CI: "true"
+      ENVIRONMENT: integration
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_PUBLIC_KEY: ${{ secrets.SUPABASE_PUBLIC_KEY }}
       E2E_USERNAME_ID: ${{ secrets.E2E_USERNAME_ID }}
