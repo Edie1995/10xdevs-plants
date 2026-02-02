@@ -44,7 +44,8 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
   }
 
   const { email } = parsed.data;
-  const redirectTo = `${url.origin}/auth/callback?next=/auth/reset-password`;
+  const siteUrl = (import.meta.env.PUBLIC_SITE_URL ?? "").trim().replace(/\/$/, "") || url.origin;
+  const redirectTo = `${siteUrl}/auth/callback?next=/auth/reset-password`;
 
   const { error } = await locals.supabase.auth.resetPasswordForEmail(email, { redirectTo });
 

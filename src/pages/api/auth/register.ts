@@ -89,11 +89,12 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
 
   const { email, password } = parsed.data;
 
+  const siteUrl = (import.meta.env.PUBLIC_SITE_URL ?? "").trim().replace(/\/$/, "") || url.origin;
   const { data, error } = await locals.supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${url.origin}/auth/callback`,
+      emailRedirectTo: `${siteUrl}/auth/callback`,
     },
   });
 

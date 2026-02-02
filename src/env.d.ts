@@ -17,6 +17,7 @@ declare global {
 interface ImportMetaEnv {
   readonly PUBLIC_SUPABASE_URL: string;
   readonly PUBLIC_SUPABASE_KEY: string;
+  readonly PUBLIC_SITE_URL: string;
   readonly SUPABASE_URL: string;
   readonly SUPABASE_KEY: string;
   // more env variables...
@@ -29,4 +30,5 @@ interface ImportMeta {
 declare module "astro:env/client" {
   export const PUBLIC_SUPABASE_URL: string;
   export const PUBLIC_SUPABASE_KEY: string;
+  export const PUBLIC_SITE_URL: string;
 }
